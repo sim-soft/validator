@@ -27,11 +27,8 @@ class Validator
     /** @var string|GroupSequence|array<string|GroupSequence>|null Validation group */
     protected string|GroupSequence|array|null $group = null;
 
-    /** @var null|callable Callback to be called before validation */
-    protected mixed $before = null;
-
-    /** @var null|callable Callback to be called after validation */
-    protected mixed $after = null;
+    /** @var array  Callback to be called before validation */
+    protected array $closures = [];
 
     /**
      * Constructor.
@@ -80,28 +77,6 @@ class Validator
     }
 
     /**
-     * Set before validate
-     *
-     * @param callable $callback The callback to be called before validation.
-     * @return void
-     */
-    public function before(callable $callback): void
-    {
-        $this->before = $callback;
-    }
-
-    /**
-     * Set after validate
-     *
-     * @param callable $callback The callback to be called after validation
-     * @return void
-     */
-    public function after(callable $callback): void
-    {
-        $this->after = $callback;
-    }
-
-    /**
      * Validate the input.
      *
      * @param string|GroupSequence|array|null $group The validation groups to validate. If none is given, "Default" is assumed
@@ -111,11 +86,6 @@ class Validator
     {
         $this->group = $group;
 
-        if (\is_callable($this->before)) {
-            /** @var callable $this->before */
-            $this->before->bindTo($this)();
-        }
-
         $this->rules = array_merge($this->rules, $this->rules());
 
         $validator = Validation::createValidator();
@@ -124,11 +94,6 @@ class Validator
             if (count($violations) > 0) {
                 $this->errors[] = $violations->get(0)->getMessage();
             }
-        }
-
-        if (\is_callable($this->after)) {
-            /** @var callable $this->after */
-            $this->after->bindTo($this)();
         }
 
         return !$this->hasErrors();
@@ -250,4 +215,31 @@ class Validator
         return [];
     }
 
+    /**
+     * Add additional method implementation.
+     *
+     * @param string $method The new method's name.
+     * @param callable $closure The method's body to be executed.
+     * @return void
+     */
+    public function macro(string $method, callable $closure): void
+    {
+        $this->closures[$method] = \Closure::bind($closure, $this, get_class());
+    }
+
+    /**
+     * Call additional method.
+     *
+     * @param string $method The method's name.
+     * @param array $arguments The arguments for the method.
+     * @return mixed
+     */
+    public function __call(string $method, array $arguments)
+    {
+        if(array_key_exists($method, $this->closures)) {
+            return call_user_func_array($this->closures[$method], $arguments);
+        }
+
+        throw new \BadMethodCallException('Undefined method.');
+    }
 }
