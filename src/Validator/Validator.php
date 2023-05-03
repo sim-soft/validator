@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints\GroupSequence;
  * @package Simsoft
  *
  */
-abstract class Validator
+class Validator
 {
     /** @var array Errors */
     protected array $errors = [];
@@ -48,7 +48,7 @@ abstract class Validator
      *
      * @return $this;
      */
-    public static function make(array $rules = []): self
+    public static function make(array $rules = []): static
     {
         return new static($rules);
     }
@@ -85,7 +85,7 @@ abstract class Validator
     }
 
     /**
-     * Set affer validate
+     * Set after validate
      *
      * @param callable $callback The callback to be called after validation
      * @return void
@@ -98,7 +98,7 @@ abstract class Validator
     /**
      * Validate the input.
      *
-     * @param string|GroupSequence|array<string|GroupSequence>|null $groups      The validation groups to validate. If none is given, "Default" is assumed
+     * @param string|GroupSequence|array|null $group The validation groups to validate. If none is given, "Default" is assumed
      * @return bool TRUE if the input is valid, FALSE otherwise.
      */
     final public function validate(string|GroupSequence|array|null $group = null): bool
@@ -131,7 +131,7 @@ abstract class Validator
     /**
      * Check the input is valid.
      *
-     * @param string|GroupSequence|array<string|GroupSequence>|null $groups      The validation groups to validate. If none is given, "Default" is assumed
+     * @param string|GroupSequence|array|null $group The validation groups to validate. If none is given, "Default" is assumed
      * @return bool TRUE if the input is valid, FALSE otherwise.
      */
     public function passes(string|GroupSequence|array|null $group = null): bool
@@ -142,7 +142,7 @@ abstract class Validator
     /**
      * Check the input is invalid.
      *
-     * @param string|GroupSequence|array<string|GroupSequence>|null $groups      The validation groups to validate. If none is given, "Default" is assumed
+     * @param string|GroupSequence|array|null $group The validation groups to validate. If none is given, "Default" is assumed
      * @return bool TRUE if the input is invalid, FALSE otherwise.
      */
     public function fails(string|GroupSequence|array|null $group = null): bool
@@ -155,7 +155,7 @@ abstract class Validator
      *
      * @param array $input The input to be validated.
      */
-    final public function setData(array $input): self
+    final public function setData(array $input): static
     {
         foreach($this->attributes as $key => $value) {
             if(is_int($key)) {
@@ -219,7 +219,7 @@ abstract class Validator
      * @param array $rules The array of constraints
      * @return $this
      */
-    public function addRule(string $attribute, array $rules = []): self
+    public function addRule(string $attribute, array $rules = []): static
     {
         $this->rules[$attribute] = $rules;
         return $this;
