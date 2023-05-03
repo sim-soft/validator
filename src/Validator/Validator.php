@@ -40,7 +40,13 @@ class Validator
      */
     public function __construct(protected array $rules = [])
     {
+        if (empty($this->attributes) && $this->rules()) {
+            $this->attributes = array_keys($this->rules());
+        }
 
+        if ($this->rules) {
+            $this->attributes = array_merge($this->attributes, array_keys($this->rules));
+        }
     }
 
     /**
@@ -221,14 +227,23 @@ class Validator
      */
     public function addRule(string $attribute, array $rules = []): static
     {
-        $this->rules[$attribute] = $rules;
+        if (array_key_exists($attribute, $this->rules)) {
+            $this->rules[$attribute] = array_merge($this->rules[$attribute], $rules);
+        } else {
+            $this->rules[$attribute] = $rules;
+        }
+
+        if (!in_array($attribute, $this->attributes)) {
+            $this->attributes[] = $attribute;
+        }
+
         return $this;
     }
 
     /**
      * Define the validation rules.
      *
-     * @return array<mixed> The validation rules.
+     * @return array The validation rules.
      */
     protected function rules(): array
     {
