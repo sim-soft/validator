@@ -28,9 +28,7 @@ class LoginTest extends TestCase
                         'password' => $password,
                     ])
                     ->validate();
-
-        print_r($validator->getErrors());
-
+        //print_r($validator->getErrors());
         $this->assertEquals($expected, $status);
     }
 
