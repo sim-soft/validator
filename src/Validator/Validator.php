@@ -92,7 +92,7 @@ class Validator
         foreach($this->rules as $attribute => $rules) {
             $violations = $validator->validate($this->input[$attribute], $rules, $this->group);
             if (count($violations) > 0) {
-                $this->errors[] = $violations->get(0)->getMessage();
+                $this->errors[$attribute] = $violations->get(0)->getMessage();
             }
         }
 
