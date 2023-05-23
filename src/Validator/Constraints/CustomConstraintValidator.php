@@ -19,7 +19,7 @@ class CustomConstraintValidator extends ConstraintValidator
      * @param Constraint $constraint The custom constraint.
      * @return void
      */
-    public function validate($value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint): void
     {
         $valid = true;
         if ($constraint instanceof Custom) {
@@ -31,7 +31,7 @@ class CustomConstraintValidator extends ConstraintValidator
 
         if (!$valid) {
             $this->context->buildViolation($constraint->message)
-                ->setParameter('{{ value }}', $value)
+                ->setParameter('{{ value }}', $value === null ? '' : $value)
                 ->addViolation();
         }
     }
