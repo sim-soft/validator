@@ -2,8 +2,11 @@
 
 namespace Simsoft;
 
-use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\EmailValidator;
 use Symfony\Component\Validator\Constraints\GroupSequence;
+use Symfony\Component\Validator\ConstraintValidatorFactory;
+use Symfony\Component\Validator\Validation;
 
 /**
  * Class Validator
@@ -88,7 +91,11 @@ class Validator
 
         $this->rules = array_merge($this->rules, $this->rules());
 
-        $validator = Validation::createValidator();
+        $validator = Validation::createValidatorBuilder()
+            ->setConstraintValidatorFactory(
+                new ConstraintValidatorFactory([
+                    EmailValidator::class => new EmailValidator(Email::VALIDATION_MODE_HTML5)
+                ]))->getValidator();
         foreach($this->rules as $attribute => $rules) {
             $violations = $validator->validate($this->input[$attribute], $rules, $this->group);
             if (count($violations) > 0) {
