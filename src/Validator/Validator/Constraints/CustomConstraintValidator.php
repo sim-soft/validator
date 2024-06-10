@@ -1,7 +1,8 @@
 <?php
 
-namespace Simsoft\Constraints;
+namespace Simsoft\Validator\Constraints;
 
+use Simsoft\Constraints\Interfaces\CustomConstraintInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -21,18 +22,13 @@ class CustomConstraintValidator extends ConstraintValidator
      */
     public function validate(mixed $value, Constraint $constraint): void
     {
-        $valid = true;
-        if ($constraint instanceof Custom) {
-            $callback = $constraint->callback;
-            $valid = $callback($value, $constraint->message);
-        } elseif ($constraint instanceof CustomConstraint) {
-            $valid = $constraint->validate($value);
-        }
-
-        if (!$valid) {
-            $this->context->buildViolation($constraint->message)
-                ->setParameter('{{ value }}', $value === null ? '' : $value)
-                ->addViolation();
+        if ($constraint instanceof ValidationRule) {
+            $constraint->withValue($value);
+            if (!$constraint->performValidation()) {
+                $this->context->buildViolation($constraint->getFailMessage())
+                    ->setParameter('{{ value }}', $value === null ? '' : $value)
+                    ->addViolation();
+            }
         }
     }
 }

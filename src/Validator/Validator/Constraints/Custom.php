@@ -1,8 +1,8 @@
 <?php
 
-namespace Simsoft\Constraints;
+namespace Simsoft\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraint;
+use Closure;
 use Symfony\Component\Validator\Exception\InvalidArgumentException;
 
 /**
@@ -10,13 +10,13 @@ use Symfony\Component\Validator\Exception\InvalidArgumentException;
  *
  * The simple custom class
  */
-class Custom extends Constraint
+class Custom extends ValidationRule
 {
     /** @var string Error message  */
     public string $message = 'Invalid: {{ value }}.';
 
-    /** @var callable The callback which should always return a boolean value */
-    public $callback;
+    /** @var Closure|null The callback which should always return a boolean value */
+    public ?Closure $callback;
 
     /**
      * Constructor
@@ -33,7 +33,10 @@ class Custom extends Constraint
         mixed $payload = null
     ) {
 
-        if (\is_array($options)) {
+        if (\is_callable($options)) {
+            $this->callback = $options;
+            $options = [];
+        } elseif (\is_array($options)) {
             $this->message = $options['message'] ?? $this->message;
             $this->callback = $options['callback'] ?? null;
             unset($options['message'], $options['callback']);
@@ -41,23 +44,21 @@ class Custom extends Constraint
             $this->message = $options;
             $this->callback = $callback;
             $options = [];
-        } elseif (\is_callable($options)) {
-            $this->callback = $options;
-            $options = [];
+        }
+
+        if (!\is_callable($this->callback)) {
+            throw new InvalidArgumentException(sprintf('The "callback" option must be a valid callable ("%s" given).', get_debug_type($this->callback)));
         }
 
         parent::__construct($options, $groups, $payload);
-
-        if (null !== $this->callback && !\is_callable($this->callback)) {
-            throw new InvalidArgumentException(sprintf('The "callback" option must be a valid callable ("%s" given).', get_debug_type($this->callback)));
-        }
     }
 
     /**
-     * {@inheritdoc}
+     * {@inhericdoc}
      */
-    public function validatedBy(): string
+    public function validate(mixed $value, Closure $fail): void
     {
-        return CustomConstraintValidator::class;
+        $closure = $this->callback;
+        $closure($value, $fail);
     }
 }

@@ -2,9 +2,13 @@
 
 namespace Test\Constraints;
 
-use Simsoft\Constraints\CustomConstraint;
+use Closure;
+use Simsoft\Validator\Constraints\ValidationRule;
 
-class Password extends CustomConstraint
+/**
+ * Password class.
+ */
+class Password extends ValidationRule
 {
     public string $message = 'Should be at least 8 alphanumeric characters which include at least 1 uppercase, 1 lowercase, 1 digit and 1 special characters only.';
     protected string $charset = 'UTF-8';
@@ -13,6 +17,13 @@ class Password extends CustomConstraint
     protected int $min;
     protected int $max;
 
+    /**
+     * Constructor
+     *
+     * @param mixed|null $options
+     * @param array|null $groups
+     * @param mixed|null $payload
+     */
     public function __construct(mixed $options = null, array $groups = null, mixed $payload = null)
     {
         $this->min = $options['min'] ?? 8;
@@ -23,28 +34,21 @@ class Password extends CustomConstraint
         parent::__construct($options, $groups, $payload);
     }
 
-    public function validate($value): bool
+    /**
+     * {@inhericdoc}
+     */
+    public function validate(mixed $value, Closure $fail): void
     {
         $length = mb_strlen($value, $this->charset);
 
         if ($length == 0) {
-            $this->message = 'Password is required';
-            return false;
+            $fail('Password is required');
+        } elseif ($length < $this->min) {
+            $fail(sprintf('Minimum %d characters are required', $this->min));
+        } elseif ($length > $this->max) {
+            $fail(sprintf('Maximum %d characters exceeded', $this->max));
+        } elseif (!preg_match($this->format, $value, $matches)) {
+            $fail($this->message);
         }
-
-        if ($length < $this->min) {
-            $this->message = sprintf('Minimum %d characters are required', $this->min);
-            return false;
-        }
-
-        if ($length > $this->max) {
-            $this->message = sprintf('Maximum %d characters exceeded', $this->max);
-            return false;
-        }
-
-        if (preg_match($this->format, $value, $matches)) {
-            return true;
-        }
-        return false;
     }
 }
