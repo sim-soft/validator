@@ -2,7 +2,6 @@
 
 namespace Simsoft\Validator\Constraints;
 
-use Simsoft\Constraints\Interfaces\CustomConstraintInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
