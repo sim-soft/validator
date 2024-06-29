@@ -4,7 +4,7 @@
     "keywords": ["validator", "symfony", "php", "simsoft"],
     "type": "library",
     "require": {
-        "php": "^8",
+        "php": ">=8.2",
         "symfony/validator": "^7"
     },
     "require-dev": {

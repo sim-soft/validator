@@ -2,6 +2,11 @@
 
 Simsoft/Validator is a wrapper for [symfony/validator](https://symfony.com/doc/current/validation.html) and inspired by Laravel validator.
 
+## Install
+```sh
+composer require simsoft/validator
+```
+
 ## Basic Usage
 ```php
 
