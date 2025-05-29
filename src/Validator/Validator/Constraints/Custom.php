@@ -28,8 +28,8 @@ class Custom extends ValidationRule
      */
     public function __construct(
         string|array|callable $options,
-        callable $callback = null,
-        array $groups = null,
+        ?callable $callback = null,
+        ?array    $groups = null,
         mixed $payload = null
     ) {
 
