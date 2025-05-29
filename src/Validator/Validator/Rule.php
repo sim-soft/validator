@@ -15,21 +15,26 @@ class Rule
      * Make custom rule with closure.
      *
      * @param callable $callable
+     * @param array|null $groups
      * @return Constraint
      */
-    public static function make(callable $callable): Constraint
+    public static function make(callable $callable, ?array $groups = null): Constraint
     {
-        return new Custom($callable);
+        return new Custom($callable, groups: $groups);
     }
 
     /**
+     * Perform required if.
+     *
      * @param bool|callable $required
      * @param string $message
+     * @param array|null $groups
      * @return Constraint
      */
     public static function requiredIf(
         bool|callable $required,
         string $message = 'This field is required.',
+        ?array $groups = null
     ): Constraint
     {
         if (is_callable($required)) {
@@ -46,6 +51,6 @@ class Rule
                     $fail($message);
                 }
             }
-        });
+        }, groups: $groups);
     }
 }
