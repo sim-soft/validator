@@ -19,8 +19,8 @@ class GenericTest extends TestCase
             'Case 1' => [
                 [
                     'email' => new Sequentially([
-                        new NotBlank(['message' => 'Email is required']),
-                        new Email(['message' => 'Invalid email']),
+                        new NotBlank(message: 'Email is required'),
+                        new Email(message: 'Invalid email'),
                     ]),
                     'password' => new Password([
                         'min' => 8,
@@ -39,8 +39,8 @@ class GenericTest extends TestCase
                     'email' => new Sequentially([
                         /*new NotBlank(message: 'Email is required'),
                         new Email(message: 'Invalid email'),*/
-                        new NotBlank(['message' => 'Email is required']),
-                        new Email(['message' => 'Invalid email']),
+                        new NotBlank(message: 'Email is required'),
+                        new Email(message: 'Invalid email'),
                     ]),
                     'password' =>
                         new Password([
