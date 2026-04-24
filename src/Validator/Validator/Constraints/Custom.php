@@ -50,7 +50,7 @@ class Custom extends ValidationRule
             throw new InvalidArgumentException(sprintf('The "callback" option must be a valid callable ("%s" given).', get_debug_type($this->callback)));
         }
 
-        parent::__construct($options, $groups, $payload);
+        parent::__construct(null, $groups, $payload);
     }
 
     /**

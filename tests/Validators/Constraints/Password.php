@@ -31,7 +31,7 @@ class Password extends ValidationRule
         $this->format = $options['format'] ?? $this->format;
         $this->message = $options['message'] ?? $this->message;
 
-        parent::__construct($options, $groups, $payload);
+        parent::__construct(null, $groups, $payload);
     }
 
     /**

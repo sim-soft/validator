@@ -2,6 +2,10 @@
 
 Simsoft/Validator is a wrapper for [symfony/validator](https://symfony.com/doc/current/validation.html) and inspired by Laravel validator.
 
+## Requirements
+
+- PHP >= 8.4
+
 ## Install
 ```sh
 composer require simsoft/validator
@@ -27,12 +31,12 @@ $validator = Validator::make($inputs, [
     ]),
     'password' => [
         new NotBlank(message: 'Password is required'),
-        new Length([
-            'min' => 8,
-            'max' => 20,
-            'minMessage' => 'Minimum {{ limit }} characters are required',
-            'maxMessage' => 'Maximum {{ limit }} characters exceeded',
-        ]),
+        new Length(
+            min: 8,
+            max: 20,
+            minMessage: 'Minimum {{ limit }} characters are required',
+            maxMessage: 'Maximum {{ limit }} characters exceeded',
+        ),
     ],
 ]);
 
@@ -48,7 +52,7 @@ if ($validator->passes()) {
         ...
     }
 
-} elseif ($valildator->fails()) {
+} elseif ($validator->fails()) {
     echo 'failed';
 
     echo $validator->errors()->first('email');  // Display the email first error message.
@@ -81,7 +85,7 @@ use Symfony\Component\Validator\Constraints\Sequentially;
 class LoginValidator extends Validator
 {
     /** @var array Expecting attributes and its default value */
-    protected array $attributes ['email', 'password', 'remember_me' => false];
+    protected array $attributes = ['email', 'password', 'remember_me' => false];
 
     /**
      * Define the validation rules.
@@ -92,17 +96,17 @@ class LoginValidator extends Validator
     {
         return [
             'email' => new Sequentially([
-                new NotBlank(['message' => 'Email is required']),
-                new Email(['message' => 'Invalid email']),
+                new NotBlank(message: 'Email is required'),
+                new Email(message: 'Invalid email'),
             ]),
             'password' => [
-                new NotBlank(['message' => 'Password is required']),
-                new Length([
-                    'min' => 8,
-                    'max' => 20,
-                    'minMessage' => 'Minimum {{ limit }} characters are required',
-                    'maxMessage' => 'Maximum {{ limit }} characters exceeded',
-                ]),
+                new NotBlank(message: 'Password is required'),
+                new Length(
+                    min: 8,
+                    max: 20,
+                    minMessage: 'Minimum {{ limit }} characters are required',
+                    maxMessage: 'Maximum {{ limit }} characters exceeded',
+                ),
             ],
         ];
     }
@@ -135,13 +139,13 @@ use Symfony\Component\Validator\Constraints\Sequentially;
 $validator = Validator::make($inputs);
 
 $validator->addRule('password', new Sequentially([
-    new NotBlank(['message' => 'Password is required']),
-    new Length([
-        'min' => 8,
-        'max' => 20,
-        'minMessage' => 'Minimum {{ limit }} characters are required',
-        'maxMessage' => 'Maximum {{ limit }} characters exceeded',
-    ]),
+    new NotBlank(message: 'Password is required'),
+    new Length(
+        min: 8,
+        max: 20,
+        minMessage: 'Minimum {{ limit }} characters are required',
+        maxMessage: 'Maximum {{ limit }} characters exceeded',
+    ),
 ]));
 ```
 ## Constraints
@@ -162,28 +166,22 @@ $inputs = $_POST;
 
 $validator = Validator::make($inputs, [
     'email' => new Sequentially([
-        new NotBlank(['message' => 'Email is required', 'groups' => ['login', 'register']),
-        new Email([
-            'message' => 'Invalid email',
-            'groups' => ['login', 'register'],
-        ]),
+        new NotBlank(message: 'Email is required', groups: ['login', 'register']),
+        new Email(message: 'Invalid email', groups: ['login', 'register']),
     ]),
     'password' => [
-        new NotBlank([
-            'message' => 'Password is required',
-            'groups' => ['login', 'register'],
-        ]),
-        new Length([
-            'min' => 8,
-            'max' => 20,
-            'minMessage' => 'Minimum {{ limit }} characters are required',
-            'maxMessage' => 'Maximum {{ limit }} characters exceeded',
-            'groups' => ['login', 'register'],
-        ]),
-        new PasswordStrength([
-            'minScore' => PasswordStrength::STRENGTH_VERY_STRONG,
-            'groups' => ['register'],
-        ])
+        new NotBlank(message: 'Password is required', groups: ['login', 'register']),
+        new Length(
+            min: 8,
+            max: 20,
+            minMessage: 'Minimum {{ limit }} characters are required',
+            maxMessage: 'Maximum {{ limit }} characters exceeded',
+            groups: ['login', 'register'],
+        ),
+        new PasswordStrength(
+            minScore: PasswordStrength::STRENGTH_VERY_STRONG,
+            groups: ['register'],
+        ),
     ],
 ]);
 
@@ -240,7 +238,14 @@ $validator = Validator::make($inputs, [
 ]);
 ```
 ## Reusable Custom Validator
-The following create a reusable "Password" validation rule.
+
+The following creates a reusable "Password" validation rule.
+
+> **Important (Symfony Validator v8):** Custom constraints must initialize their
+> own properties in the constructor
+> and pass `null` as the first argument to `parent::__construct()`. Passing an
+> options array to the parent
+> constructor is no longer supported.
 
 ```php
 namespace App\Constraints;
@@ -257,14 +262,14 @@ class Password extends ValidationRule
     protected int $min;
     protected int $max;
 
-    public function __construct(mixed $options = null, array $groups = null, mixed $payload = null)
+    public function __construct(mixed $options = null, ?array $groups = null, mixed $payload = null)
     {
         $this->min = $options['min'] ?? 8;
         $this->max = $options['max'] ?? 20;
         $this->format = $options['format'] ?? $this->format;
         $this->message = $options['message'] ?? $this->message;
 
-        parent::__construct($options, $groups, $payload);
+        parent::__construct(null, $groups, $payload);
     }
 
     public function validate(mixed $value, Closure $fail): void
@@ -297,9 +302,8 @@ $validator = Validator::make($input, [
         'min' => 5,
         'max' => 10,
         'format' => '/new regex pattern/',
-        'groups' => ['login'],
-    ]),
-])
+    ], groups: ['login']),
+]);
 
 if ($validator->passes()) {
     echo 'Pass';
@@ -327,7 +331,7 @@ $validator = Validator::make($inputs, [
                 $fail('Invalid password');
             }
         })
-    ]
+    ],
 
     'password_confirm' => [
         Rule::requiredIf(!empty($inputs['password'])),
@@ -336,7 +340,7 @@ $validator = Validator::make($inputs, [
         // or
         Rule::requiredIf(fn() => !empty($inputs['password'])),
     ],
-])
+]);
 ```
 
 ## License
