@@ -21,7 +21,7 @@ class LoginValidator extends Validator
         return [
             'email' => new Sequentially([
                 new NotBlank(message: 'Email is required'),
-                new Length(['min' => 10, 'max' => 150]),
+                new Length(min: 10, max: 150),
                 new Email(message: 'Invalid email'),
             ]),
             'password' =>

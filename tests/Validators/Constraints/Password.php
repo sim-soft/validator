@@ -24,7 +24,7 @@ class Password extends ValidationRule
      * @param array|null $groups
      * @param mixed|null $payload
      */
-    public function __construct(mixed $options = null, array $groups = null, mixed $payload = null)
+    public function __construct(mixed $options = null, ?array $groups = null, mixed $payload = null)
     {
         $this->min = $options['min'] ?? 8;
         $this->max = $options['max'] ?? 20;
