@@ -19,7 +19,7 @@ $validator = Validator::make($inputs, [
         }
     }),
 
-    // Required when password is not empty
+    // Required when the password is not empty
     'password_confirm' => Rule::requiredIf(!empty($inputs['password'])),
 ]);
 ```
@@ -68,7 +68,7 @@ $validator = Validator::make($_POST, [
     'role' => new NotBlank(message: 'Role is required'),
 ], ['role', 'permissions']);
 
-// Only validate 'permissions' when role is 'admin'
+// Only validate 'permissions' when a role is 'admin'
 $validator->sometimes('permissions', new NotBlank(message: 'Permissions required for admins'), function (array $input) {
     return $input['role'] === 'admin';
 });

@@ -1,7 +1,8 @@
 # Validation Groups
 
 Apply only a subset of constraints by assigning groups. Useful when the same
-fields have different rules in different contexts (e.g. login vs registration).
+fields have different rules in different contexts (e.g., login vs.
+registration).
 
 ```php
 use Simsoft\Validator;

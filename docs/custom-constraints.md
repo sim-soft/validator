@@ -65,6 +65,6 @@ $validator = Validator::make($_POST, [
 
 ## Advanced Custom Constraints
 
-For constraints that need access to Symfony's execution context (e.g.
+For constraints that need access to Symfony's execution context (e.g.,
 cross-field validation, database lookups), refer
 to [How to Create a Custom Validation Constraint](https://symfony.com/doc/current/validation/custom_constraint.html).

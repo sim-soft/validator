@@ -47,7 +47,7 @@ $validator = Validator::make([
 ], ['items']);
 
 if ($validator->fails()) {
-    // Errors are keyed by expanded path
+    // Errors are keyed by an expanded path
     echo $validator->errors()->first('items.0.price'); // "Item price is required"
     echo $validator->errors()->first('items.1.name');  // "Item name is required"
 }

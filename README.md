@@ -72,7 +72,7 @@ foreach ($validator->safe() as $key => $value) {
 ```php
 if ($validator->fails()) {
     echo $validator->errors()->first('email');     // first error for attribute
-    $errors = $validator->errors()->all();         // all errors as array
+    $errors = $validator->errors()->all();         // all errors as an array
     $count = count($validator->errors());          // number of failed attributes
 
     if ($validator->errors()->has('email')) {
