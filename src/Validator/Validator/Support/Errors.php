@@ -2,31 +2,37 @@
 
 namespace Simsoft\Validator\Support;
 
-use Iterator;
+use ArrayIterator;
+use Countable;
+use IteratorAggregate;
+use Traversable;
 
 /**
- * Errors class.
+ * Errors class
+ *
+ * Collects and provides access to validation error messages.
  */
-class Errors implements Iterator
+class Errors implements IteratorAggregate, Countable
 {
-    /** @var bool Determine has valid next item. */
-    protected bool $hasNext = true;
+    /** @var array<string, array<string>> Error messages grouped by attribute */
+    protected array $errors = [];
 
     /**
      * Constructor.
      *
-     * @param array $errors
+     * @param array<string, array<string>> $errors Pre-loaded errors.
      */
-    public function __construct(public array $errors = [])
+    public function __construct(array $errors = [])
     {
+        $this->errors = $errors;
     }
 
     /**
-     * Add error
+     * Add an error message for an attribute.
      *
      * @param string $attribute Attribute name.
      * @param string $message Error message.
-     * @return $this
+     * @return static
      */
     public function add(string $attribute, string $message): static
     {
@@ -36,7 +42,7 @@ class Errors implements Iterator
     }
 
     /**
-     * Get first error message of an attribute.
+     * Get the first error message for an attribute.
      *
      * @param string $attribute Attribute name.
      * @return string|null
@@ -47,7 +53,7 @@ class Errors implements Iterator
     }
 
     /**
-     * Determine if an attribute's error message exists.
+     * Determine if an attribute has error messages.
      *
      * @param string $attribute Attribute name.
      * @return bool
@@ -58,9 +64,9 @@ class Errors implements Iterator
     }
 
     /**
-     * Get all errors
+     * Get all errors as an associative array.
      *
-     * @return array
+     * @return array<string, array<string>>
      */
     public function all(): array
     {
@@ -68,68 +74,65 @@ class Errors implements Iterator
     }
 
     /**
-     * Whether errors is empty.
+     * Whether the error collection is empty.
      *
      * @return bool
      */
     public function isEmpty(): bool
     {
-        return empty($this->errors);
+        return $this->errors === [];
     }
 
     /**
-     * Get all error messages for an attribute.
+     * Get the number of attributes that have errors.
+     *
+     * @return int
+     */
+    public function count(): int
+    {
+        return count($this->errors);
+    }
+
+    /**
+     * Get all error messages for a specific attribute.
      *
      * @param string $attribute Attribute name.
-     * @return Iterator
+     * @return Traversable<string>
      */
-    public function get(string $attribute): Iterator
+    public function get(string $attribute): Traversable
     {
-        if ($this->has($attribute)) {
-            foreach ($this->errors[$attribute] as $message) {
-                yield $message;
-            }
-        }
+        return new ArrayIterator($this->errors[$attribute] ?? []);
     }
 
     /**
-     * @inheritDoc
+     * Reset all errors.
+     *
+     * @return void
      */
-    public function rewind(): void
+    public function reset(): void
     {
-        reset($this->errors);
+        $this->errors = [];
     }
 
     /**
-     * @inheritDoc
+     * Get all errors as an array.
+     *
+     * Alias for `all()`.
+     *
+     * @return array<string, array<string>>
      */
-    public function valid(): bool
+    public function toArray(): array
     {
-        return $this->hasNext;
+        return $this->errors;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @return Traversable<string, array<string>>
      */
-    public function next(): void
+    public function getIterator(): Traversable
     {
-        $this->hasNext = (bool) next($this->errors);
+        return new ArrayIterator($this->errors);
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function current(): mixed
-    {
-        return current($this->errors);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function key(): string|int|null
-    {
-        return key($this->errors);
-    }
-
 }

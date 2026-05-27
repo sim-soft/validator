@@ -4,7 +4,6 @@ namespace Simsoft;
 
 use BadMethodCallException;
 use Closure;
-use Simsoft\Validator\Constraints\Custom;
 use Simsoft\Validator\Support\Errors;
 use Simsoft\Validator\Support\ValidatedInput;
 use Symfony\Component\Validator\Constraint;
@@ -14,46 +13,50 @@ use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\Constraints\Sequentially;
 use Symfony\Component\Validator\ConstraintValidatorFactory;
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * Class Validator
+ * Validator class
  *
- * The Validator class is used to validate user input.
- *
- * @package Simsoft
- *
+ * Validates user input using Symfony Validator constraints with a Laravel-inspired API.
  */
 class Validator
 {
-    /** @var array Define expected attributes */
+    /** @var array Expected attributes and their default values */
     protected array $attributes = [];
 
-    /** @var array User input */
+    /** @var array User input data */
     private array $input = [];
 
-    /** @var ValidatedInput Validated attributes. */
+    /** @var ValidatedInput Validated attributes */
     protected ValidatedInput $validated;
 
-    /** @var Errors Errors object */
+    /** @var Errors Error messages */
     protected Errors $errors;
 
     /** @var string|GroupSequence|array<string|GroupSequence>|null Validation group */
     protected string|GroupSequence|array|null $group = null;
 
-    /** @var array  Closures to be called before validation */
+    /** @var array<string, Closure> Macro closures */
     protected array $closures = [];
 
-    /** @var bool Indicates if the validator should stop on the first rule failure. */
+    /** @var bool Stop on first attribute failure */
     protected bool $stopOnFirstFailure = false;
 
-    /** @var array Extended rules. */
-    protected static array $extends = [];
+    /** @var array<Closure> After-validation hooks */
+    protected array $afterHooks = [];
+
+    /** @var array<array{attribute: string, rules: array|Constraint, condition: Closure}> Conditional rules */
+    protected array $sometimesRules = [];
+
+    /** @var ValidatorInterface|null Cached Symfony validator instance */
+    private ?ValidatorInterface $symfonyValidator = null;
 
     /**
      * Constructor.
      *
-     * @param array $rules Define validation rules.
-     * @param array $attributes Define expected attributes.
+     * @param array $rules Validation rules.
+     * @param array $attributes Expected attributes.
      */
     public function __construct(protected array $rules = [], array $attributes = [])
     {
@@ -70,11 +73,11 @@ class Validator
     }
 
     /**
-     * Get validation object by make rules
+     * Create a validator instance with input and rules.
      *
      * @param array $input Data to be validated.
-     * @param array $rules Define validation rules.
-     * @param array $attributes Define expected attributes.
+     * @param array $rules Validation rules.
+     * @param array $attributes Expected attributes.
      * @return static
      */
     public static function make(array $input, array $rules = [], array $attributes = []): static
@@ -85,28 +88,28 @@ class Validator
     }
 
     /**
-     * Normalized predefined attributes.a
+     * Normalize attribute definitions into key => default pairs.
      *
-     * @param array $attributes
-     * @return array
+     * @param array $attributes Raw attribute definitions.
+     * @return array Normalized attributes.
      */
     protected function normalizedAttributes(array $attributes): array
     {
-        $attrs = [];
+        $normalized = [];
         foreach ($attributes as $key => $value) {
             if (is_integer($key)) {
-                $attrs[$value] = null;
+                $normalized[$value] = null;
             } else {
-                $attrs[$key] = $value;
+                $normalized[$key] = $value;
             }
         }
-        return $attrs;
+        return $normalized;
     }
 
     /**
-     * The validator should stop validating subsequence attributes once a single validation failure has occurred
+     * Stop validating remaining attributes after the first failure.
      *
-     * @return $this
+     * @return static
      */
     public function stopOnFirstFailure(): static
     {
@@ -115,9 +118,9 @@ class Validator
     }
 
     /**
-     * Get All the errors.
+     * Get the errors collection.
      *
-     * @return Errors The errors.
+     * @return Errors
      */
     public function errors(): Errors
     {
@@ -125,45 +128,91 @@ class Validator
     }
 
     /**
-     * Validate the input.
+     * Register a callback to run after validation.
      *
-     * @param string|GroupSequence|array|null $group The validation groups to validate. If none is given, "Default" is assumed
-     * @return bool TRUE if the input is valid, FALSE otherwise.
+     * @param Closure $callback Callback receiving this Validator instance.
+     * @return static
+     */
+    public function after(Closure $callback): static
+    {
+        $this->afterHooks[] = $callback;
+        return $this;
+    }
+
+    /**
+     * Conditionally apply rules to an attribute.
+     *
+     * The rules are only applied when the condition closure returns true.
+     * The condition receives the full input array.
+     *
+     * @param string $attribute The attribute name (supports dot notation).
+     * @param array|Constraint $rules Constraints to apply.
+     * @param Closure $condition Closure receiving input array, returns bool.
+     * @return static
+     */
+    public function sometimes(string $attribute, array|Constraint $rules, Closure $condition): static
+    {
+        $this->sometimesRules[] = [
+            'attribute' => $attribute,
+            'rules' => $rules,
+            'condition' => $condition,
+        ];
+        return $this;
+    }
+
+    /**
+     * Validate the input against the rules.
+     *
+     * @param string|GroupSequence|array|null $group Validation groups to apply.
+     * @return bool TRUE if valid, FALSE otherwise.
      */
     final public function validate(string|GroupSequence|array|null $group = null): bool
     {
         $this->group = $group;
+        $this->errors->reset();
+        $this->validated->reset();
 
         if ($this->rules === []) {
             $this->rules = $this->rules();
         }
 
-        $validator = Validation::createValidatorBuilder()
-            ->setConstraintValidatorFactory(
-                new ConstraintValidatorFactory([
-                    EmailValidator::class => new EmailValidator(Email::VALIDATION_MODE_HTML5)
-                ]))->getValidator();
+        $this->applySometimesRules();
+        $expandedRules = $this->expandRules($this->rules);
 
-        foreach($this->rules as $attribute => $rules) {
-            $violations = $validator->validate($this->input[$attribute], $rules, $this->group);
-            if (count($violations) > 0) {
-                $this->errors->add($attribute, $violations->get(0)->getMessage());
+        $validator = $this->getSymfonyValidator();
+        $messages = $this->messages();
+
+        foreach ($expandedRules as $attribute => $rules) {
+            $value = $this->getValue($attribute);
+            $violations = $validator->validate($value, $rules, $this->group);
+            $violationCount = count($violations);
+
+            if ($violationCount > 0) {
+                for ($index = 0; $index < $violationCount; $index++) {
+                    $violationMessage = $violations->get($index)->getMessage();
+                    $message = $messages[$attribute] ?? $violationMessage;
+                    $this->errors->add($attribute, $message);
+                }
                 if ($this->stopOnFirstFailure) {
                     break;
                 }
             } else {
-                $this->validated->add($attribute, $this->input[$attribute]);
+                $this->validated->add($attribute, $value);
             }
+        }
+
+        foreach ($this->afterHooks as $hook) {
+            $hook($this);
         }
 
         return $this->errors()->isEmpty();
     }
 
     /**
-     * Check the input is valid.
+     * Check if the input passes validation.
      *
-     * @param string|GroupSequence|array|null $group The validation groups to validate. If none is given, "Default" is assumed
-     * @return bool TRUE if the input is valid, FALSE otherwise.
+     * @param string|GroupSequence|array|null $group Validation groups to apply.
+     * @return bool TRUE if valid, FALSE otherwise.
      */
     public function passes(string|GroupSequence|array|null $group = null): bool
     {
@@ -173,10 +222,10 @@ class Validator
     }
 
     /**
-     * Check the input is invalid.
+     * Check if the input fails validation.
      *
-     * @param string|GroupSequence|array|null $group The validation groups to validate. If none is given, "Default" is assumed
-     * @return bool TRUE if the input is invalid, FALSE otherwise.
+     * @param string|GroupSequence|array|null $group Validation groups to apply.
+     * @return bool TRUE if invalid, FALSE otherwise.
      */
     public function fails(string|GroupSequence|array|null $group = null): bool
     {
@@ -186,23 +235,25 @@ class Validator
     }
 
     /**
-     * Set input data
+     * Set the input data to validate.
      *
-     * @param array $input The input to be validated.
+     * @param array $input The input data.
+     * @return static
      */
     final public function setData(array $input): static
     {
-        foreach($this->attributes as $attribute => $defaultValue) {
-            $this->input[$attribute] = array_key_exists($attribute, $input) ? $input[$attribute]: $defaultValue;
+        foreach ($this->attributes as $attribute => $defaultValue) {
+            $this->input[$attribute] = array_key_exists($attribute, $input) ? $input[$attribute] : $defaultValue;
         }
+
+        $this->validated->reset();
+        $this->errors->reset();
 
         return $this;
     }
 
     /**
-     * Get all the unvalidated input values.
-     *
-     * If an attribute is provided, it will return the value of that attribute only.
+     * Get all raw input values.
      *
      * @return array
      */
@@ -212,9 +263,9 @@ class Validator
     }
 
     /**
-     * Retrieved validated inputs. If attribute is provided, return the attribute value only.
+     * Get validated data, optionally for a single attribute.
      *
-     * @param string|null $attribute Input value to be returned.
+     * @param string|null $attribute Attribute name, or null for all.
      * @return mixed
      */
     final public function validated(?string $attribute = null): mixed
@@ -225,7 +276,7 @@ class Validator
     }
 
     /**
-     * Get validated input.
+     * Get the validated input object for subset operations.
      *
      * @return ValidatedInput
      */
@@ -235,34 +286,22 @@ class Validator
     }
 
     /**
-     * Extends validator with named rule.
-     *
-     * @param string $ruleName The name of the new rule.
-     * @param Closure $callable The closure which perform the validation.
-     * @return void
-     */
-    public static function extend(string $ruleName, Closure $callable): void
-    {
-        static::$extends[$ruleName] = new Custom($callable);
-    }
-
-    /**
-     * Add constraints rules to an attribute
+     * Add constraint rules to an attribute.
      *
      * @param string $attribute The attribute name.
-     * @param array|Constraint $rules The array of constraints
-     * @return $this
+     * @param array|Constraint $rules Constraints to add.
+     * @return static
      */
     public function addRule(string $attribute, array|Constraint $rules): static
     {
         if ($this->rules === []) {
-            $this->rules = $this->rules();  // possible custom rules.
+            $this->rules = $this->rules();
         }
 
         if (array_key_exists($attribute, $this->rules)) {
             if (is_array($this->rules[$attribute])) {
                 if (is_array($rules)) {
-                    $this->rules[$attribute] = array_merge($this->rules[$attribute], $rules);
+                    $this->rules[$attribute] = [...$this->rules[$attribute], ...$rules];
                 } elseif ($rules instanceof Constraint) {
                     $this->rules[$attribute][] = $rules;
                 }
@@ -271,15 +310,15 @@ class Validator
                     $this->rules[$attribute] = [$this->rules[$attribute], ...$rules];
                 } elseif ($rules instanceof Sequentially) {
                     $this->rules[$attribute] = new Sequentially([
-                        $this->rules[$attribute]->getNestedConstraints(),
-                        ...$rules->getNestedConstraints()
+                        ...$this->rules[$attribute]->getNestedConstraints(),
+                        ...$rules->getNestedConstraints(),
                     ]);
                 } elseif ($rules instanceof Constraint) {
                     $this->rules[$attribute] = [$this->rules[$attribute], $rules];
                 }
-            }elseif ($this->rules[$attribute] instanceof Constraint) {
+            } elseif ($this->rules[$attribute] instanceof Constraint) {
                 if (is_array($rules)) {
-                    array_unshift($rules, $this->rules[$attribute]);
+                    $this->rules[$attribute] = [$this->rules[$attribute], ...$rules];
                 } elseif ($rules instanceof Constraint) {
                     $this->rules[$attribute] = [$this->rules[$attribute], $rules];
                 }
@@ -290,13 +329,14 @@ class Validator
 
         if (!array_key_exists($attribute, $this->attributes)) {
             $this->attributes[$attribute] = null;
+            $this->input[$attribute] = null;
         }
 
         return $this;
     }
 
     /**
-     * Define the validation rules.
+     * Define the validation rules (override in subclasses).
      *
      * @return array The validation rules.
      */
@@ -306,30 +346,165 @@ class Validator
     }
 
     /**
-     * Add additional method implementation.
+     * Define custom error messages per attribute (override in subclasses).
      *
-     * @param string $method The new method's name.
-     * @param callable $closure The method's body to be executed.
-     * @return void
+     * @return array<string, string>
      */
-    public function macro(string $method, callable $closure): void
+    protected function messages(): array
     {
-        $this->closures[$method] = Closure::bind($closure, $this, get_class());
+        return [];
     }
 
     /**
-     * Call additional method.
+     * Register a macro method on this instance.
      *
-     * @param string $method The method's name.
-     * @param array $arguments The arguments for the method.
-     * @return mixed
+     * @param string $method The method name.
+     * @param Closure $closure The method body.
+     * @return void
      */
-    public function __call(string $method, array $arguments)
+    public function macro(string $method, Closure $closure): void
     {
-        if(array_key_exists($method, $this->closures)) {
-            return call_user_func_array($this->closures[$method], $arguments);
+        $this->closures[$method] = Closure::bind($closure, $this, static::class);
+    }
+
+    /**
+     * Call a registered macro method.
+     *
+     * @param string $method The method name.
+     * @param array $arguments The method arguments.
+     * @return mixed
+     * @throws BadMethodCallException When the method is not defined.
+     */
+    public function __call(string $method, array $arguments): mixed
+    {
+        if (array_key_exists($method, $this->closures)) {
+            return ($this->closures[$method])(...$arguments);
         }
 
-        throw new BadMethodCallException('Undefined method.');
+        throw new BadMethodCallException("Undefined method: $method");
+    }
+
+    /**
+     * Get a value from input using dot notation.
+     *
+     * @param string $key The dot-notated key (e.g. 'address.city').
+     * @return mixed
+     */
+    private function getValue(string $key): mixed
+    {
+        if (array_key_exists($key, $this->input)) {
+            return $this->input[$key];
+        }
+
+        $segments = explode('.', $key);
+        $value = $this->input;
+
+        foreach ($segments as $segment) {
+            if (!is_array($value) || !array_key_exists($segment, $value)) {
+                return null;
+            }
+            $value = $value[$segment];
+        }
+
+        return $value;
+    }
+
+    /**
+     * Expand wildcard rules against actual input data.
+     *
+     * Rules with '*' in the key are expanded to match actual array indices.
+     * For example, 'items.*.name' with input ['items' => [['name' => 'A'], ['name' => 'B']]]
+     * expands to 'items.0.name' and 'items.1.name'.
+     *
+     * @param array $rules The rules to expand.
+     * @return array Expanded rules.
+     */
+    private function expandRules(array $rules): array
+    {
+        $expanded = [];
+
+        foreach ($rules as $attribute => $constraint) {
+            if (!str_contains($attribute, '*')) {
+                $expanded[$attribute] = $constraint;
+                continue;
+            }
+
+            $keys = $this->expandWildcardKey($attribute);
+            foreach ($keys as $expandedKey) {
+                $expanded[$expandedKey] = $constraint;
+            }
+        }
+
+        return $expanded;
+    }
+
+    /**
+     * Expand a wildcard key into concrete keys based on input data.
+     *
+     * @param string $pattern The pattern with wildcards (e.g. 'items.*.name').
+     * @return array<string> Expanded keys.
+     */
+    private function expandWildcardKey(string $pattern): array
+    {
+        $segments = explode('.', $pattern);
+        $keys = [''];
+
+        foreach ($segments as $segment) {
+            $newKeys = [];
+            foreach ($keys as $currentKey) {
+                $prefix = $currentKey === '' ? '' : "$currentKey.";
+
+                if ($segment === '*') {
+                    $value = $this->getValue(rtrim($currentKey, '.'));
+                    if (is_array($value)) {
+                        foreach (array_keys($value) as $index) {
+                            $newKeys[] = "$prefix$index";
+                        }
+                    }
+                } else {
+                    $newKeys[] = "$prefix$segment";
+                }
+            }
+            $keys = $newKeys;
+        }
+
+        return $keys;
+    }
+
+    /**
+     * Apply conditional sometimes rules to the rules array.
+     *
+     * @return void
+     */
+    private function applySometimesRules(): void
+    {
+        foreach ($this->sometimesRules as $entry) {
+            if (($entry['condition'])($this->input)) {
+                $this->rules[$entry['attribute']] = $entry['rules'];
+
+                if (!array_key_exists($entry['attribute'], $this->attributes)) {
+                    $this->attributes[$entry['attribute']] = null;
+                }
+            }
+        }
+    }
+
+    /**
+     * Get or create the cached Symfony validator instance.
+     *
+     * @return ValidatorInterface
+     */
+    private function getSymfonyValidator(): ValidatorInterface
+    {
+        if ($this->symfonyValidator === null) {
+            $this->symfonyValidator = Validation::createValidatorBuilder()
+                ->setConstraintValidatorFactory(
+                    new ConstraintValidatorFactory([
+                        EmailValidator::class => new EmailValidator(Email::VALIDATION_MODE_HTML5),
+                    ])
+                )->getValidator();
+        }
+
+        return $this->symfonyValidator;
     }
 }

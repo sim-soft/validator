@@ -8,35 +8,42 @@ use Symfony\Component\Validator\Constraint;
 /**
  * ValidationRule class
  *
- * The simplified custom constraint class.
+ * The simplified custom constraint class for creating reusable validation rules.
  */
 abstract class ValidationRule extends Constraint
 {
     /** @var string The error message */
     public string $message = 'Invalid {{ value }}.';
 
-    protected mixed $value;
+    /** @var mixed The value being validated */
+    protected mixed $value = null;
 
-    /** @var bool Constraint is passed */
-    public bool $passed = true;
+    /** @var bool Whether the constraint passed validation */
+    protected bool $passed = true;
 
     /**
      * Perform validation.
      *
-     * @param mixed $value
-     * @param Closure $fail
+     * @param mixed $value The value to validate.
+     * @param Closure $fail Closure to call with error message on failure.
      * @return void
      */
     abstract public function validate(mixed $value, Closure $fail): void;
 
     /**
-     * {@inheritdoc }
+     * {@inheritDoc}
      */
     public function validatedBy(): string
     {
         return CustomConstraintValidator::class;
     }
 
+    /**
+     * Set the value to be validated.
+     *
+     * @param mixed $value The value to validate.
+     * @return static
+     */
     public function withValue(mixed $value): static
     {
         $this->value = $value;
@@ -44,14 +51,19 @@ abstract class ValidationRule extends Constraint
     }
 
     /**
-     * @return bool
+     * Execute validation and return the result.
+     *
+     * @return bool TRUE if validation passed, FALSE otherwise.
      */
     public function performValidation(): bool
     {
-        $this->validate($this->value, function(string $message) {
+        $this->passed = true;
+
+        $this->validate($this->value, function (string $message): void {
             $this->setFailMessage($message);
             $this->passed = false;
         });
+
         return $this->passed;
     }
 
@@ -67,7 +79,7 @@ abstract class ValidationRule extends Constraint
     }
 
     /**
-     * Get fail message
+     * Get fail message.
      *
      * @return string
      */

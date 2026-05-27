@@ -8,23 +8,23 @@ use Symfony\Component\Validator\Exception\InvalidArgumentException;
 /**
  * Custom class
  *
- * The simple custom class
+ * Closure-based custom constraint for inline validation rules.
  */
 class Custom extends ValidationRule
 {
-    /** @var string Error message  */
+    /** @var string Error message */
     public string $message = 'Invalid: {{ value }}.';
 
-    /** @var Closure|null The callback which should always return a boolean value */
-    public ?Closure $callback;
+    /** @var Closure The callback which performs the validation */
+    public Closure $callback;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param string|array|callable $options
-     * @param callable|null $callback
-     * @param array|null $groups
-     * @param mixed|null $payload
+     * @param string|array|callable $options Callable, array with 'callback' key, or string message.
+     * @param callable|null $callback Callback when $options is a string message.
+     * @param array|null $groups Validation groups.
+     * @param mixed|null $payload Custom payload.
      */
     public function __construct(
         string|array|callable $options,
@@ -32,33 +32,36 @@ class Custom extends ValidationRule
         ?array    $groups = null,
         mixed $payload = null
     ) {
-
-        if (\is_callable($options)) {
-            $this->callback = $options;
-            $options = [];
-        } elseif (\is_array($options)) {
+        if (is_callable($options)) {
+            $this->callback = $options instanceof Closure ? $options : Closure::fromCallable($options);
+        } elseif (is_array($options)) {
             $this->message = $options['message'] ?? $this->message;
-            $this->callback = $options['callback'] ?? null;
+            $cb = $options['callback'] ?? null;
+            if (is_callable($cb)) {
+                $this->callback = $cb instanceof Closure ? $cb : Closure::fromCallable($cb);
+            }
             unset($options['message'], $options['callback']);
-        } elseif (\is_string($options)) {
+        } elseif (is_string($options)) {
             $this->message = $options;
-            $this->callback = $callback;
-            $options = [];
+            if (is_callable($callback)) {
+                $this->callback = $callback instanceof Closure ? $callback : Closure::fromCallable($callback);
+            }
         }
 
-        if (!\is_callable($this->callback)) {
-            throw new InvalidArgumentException(sprintf('The "callback" option must be a valid callable ("%s" given).', get_debug_type($this->callback)));
+        if (!isset($this->callback)) {
+            throw new InvalidArgumentException(
+                sprintf('The "callback" option must be a valid callable ("%s" given).', get_debug_type($callback))
+            );
         }
 
         parent::__construct(null, $groups, $payload);
     }
 
     /**
-     * {@inhericdoc}
+     * {@inheritDoc}
      */
     public function validate(mixed $value, Closure $fail): void
     {
-        $closure = $this->callback;
-        $closure($value, $fail);
+        ($this->callback)($value, $fail);
     }
 }

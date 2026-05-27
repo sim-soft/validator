@@ -1,8 +1,31 @@
 {
     "name": "simsoft/validator",
-    "description": "Validator wrapper for Symfony validator",
-    "keywords": ["validator", "symfony", "php", "simsoft"],
+  "description": "A Laravel-inspired validation wrapper for Symfony Validator with custom rules, error handling, and validated input support.",
+  "keywords": [
+    "validator",
+    "validation",
+    "symfony",
+    "laravel",
+    "input-validation",
+    "form-validation",
+    "constraints",
+    "rules",
+    "php",
+    "simsoft"
+  ],
     "type": "library",
+  "license": "MIT",
+  "homepage": "https://github.com/simsoft/validator",
+  "authors": [
+    {
+      "name": "V. Zang, Loo",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/simsoft/validator/issues",
+    "source": "https://github.com/simsoft/validator"
+  },
     "require": {
       "php": ">=8.4",
       "symfony/validator": "^8"
@@ -10,14 +33,23 @@
     "require-dev": {
         "phpunit/phpunit": "^11"
     },
-    "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Simsoft\\": "src/Validator",
-            "Test\\": "tests/Validators"
+          "Simsoft\\": "src/Validator"
+        }
+    },
+  "autoload-dev": {
+    "psr-4": {
+      "Test\\": "tests/Validators",
+      "Tests\\": "tests"
         }
     },
     "scripts": {
         "test": "phpunit --display-deprecations tests"
-    }
+    },
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }
