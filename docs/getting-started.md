@@ -1,21 +1,19 @@
-# Simsoft Validator
+# Getting Started
 
-A Laravel-inspired validation wrapper
-for [Symfony Validator](https://symfony.com/doc/current/validation.html). Simple
-API, full power of Symfony constraints.
+## Installation
 
-## Requirements
+```bash
+composer require simsoft/validator
+```
+
+**Requirements:**
 
 - PHP >= 8.4
 - Symfony Validator ^8
 
-## Installation
-
-```sh
-composer require simsoft/validator
-```
-
 ## Basic Usage
+
+Use `Validator::make()` to validate an array of input against a set of rules.
 
 ```php
 use Simsoft\Validator;
@@ -47,7 +45,7 @@ if ($validator->passes()) {
 }
 ```
 
-**`Sequentially` vs array rules:**
+## Sequentially vs Array Rules
 
 - `new Sequentially([...])` — stops at the first failing constraint (
   short-circuit)
@@ -61,6 +59,7 @@ $email = $validator->validated('email');           // single attribute value
 
 $data = $validator->safe()->only(['email']);       // subset of validated data
 $data = $validator->safe()->except(['remember_me']); // exclude specific keys
+$data = $validator->safe()->all();                // all validated data
 
 foreach ($validator->safe() as $key => $value) {
     // iterate validated attributes
@@ -71,25 +70,37 @@ foreach ($validator->safe() as $key => $value) {
 
 ```php
 if ($validator->fails()) {
-    echo $validator->errors()->first('email');     // first error for attribute
-    $errors = $validator->errors()->all();         // all errors as an array
-    $count = count($validator->errors());          // number of failed attributes
+    // First error for a specific attribute
+    echo $validator->errors()->first('email');
 
+    // All errors as an associative array
+    $errors = $validator->errors()->all();
+
+    // Count how many attributes have errors
+    $count = count($validator->errors());
+
+    // Check if a specific attribute has errors
     if ($validator->errors()->has('email')) {
-        // attribute has errors
+        // ...
     }
 
+    // Iterate errors for a single attribute
     foreach ($validator->errors()->get('email') as $message) {
-        echo $message;                            // iterate attribute errors
+        echo $message;
     }
 
+    // Iterate all errors
     foreach ($validator->errors() as $attribute => $messages) {
-        // iterate all errors
+        foreach ($messages as $message) {
+            echo "$attribute: $message";
+        }
     }
 }
 ```
 
 ## Custom Validator Class
+
+For reusable validation logic, extend the `Validator` class.
 
 ```php
 namespace App\Validators;
@@ -121,27 +132,14 @@ $validator = LoginValidator::make($_POST);
 
 if ($validator->passes()) {
     $data = $validator->validated();
+} else {
+    print_r($validator->errors()->all());
 }
 ```
 
-## Documentation
+## Next Steps
 
-For advanced features, see the [full documentation](docs/):
-
-- [Custom Rules with Closures](docs/custom-rules.md)
-- [Reusable Custom Constraints](docs/custom-constraints.md)
-- [Validation Groups](docs/validation-groups.md)
-- [Nested & Wildcard Array Validation](docs/array-validation.md)
-- [Conditional & Optional Rules](docs/conditional-rules.md)
-- [After Hooks & Cross-Field Validation](docs/after-hooks.md)
-- [Runtime Rules & Configuration](docs/runtime-rules.md)
-- [Comparison with Other Validators](docs/comparison.md)
-
-## Available Constraints
-
-All Symfony validation constraints are supported.
-See [Symfony Validation Constraints](https://symfony.com/doc/current/validation.html#constraints).
-
-## License
-
-MIT License. See [LICENSE](LICENSE) for details.
+- [Custom Rules with Closures](custom-rules.md)
+- [Reusable Custom Constraints](custom-constraints.md)
+- [Nested & Wildcard Array Validation](array-validation.md)
+- [Conditional Rules](conditional-rules.md)

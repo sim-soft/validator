@@ -8,26 +8,37 @@ use Symfony\Component\Validator\ConstraintValidator;
 /**
  * CustomConstraintValidator class
  *
- * The custom constraint validator used for validate the custom constraint.
+ * Bridges ValidationRule subclasses into Symfony's constraint validation system.
  */
 class CustomConstraintValidator extends ConstraintValidator
 {
     /**
-     * Validate constraint.
+     * Validate a constraint against a value.
      *
-     * @param mixed $value The value
-     * @param Constraint $constraint The custom constraint.
+     * @param mixed $value The value being validated.
+     * @param Constraint $constraint The constraint to validate.
      * @return void
      */
     public function validate(mixed $value, Constraint $constraint): void
     {
-        if ($constraint instanceof ValidationRule) {
-            $constraint->withValue($value);
-            if (!$constraint->performValidation()) {
-                $this->context->buildViolation($constraint->getFailMessage())
-                    ->setParameter('{{ value }}', $value === null ? '' : $value)
-                    ->addViolation();
-            }
+        if (!$constraint instanceof ValidationRule) {
+            return;
         }
+
+        $constraint->withValue($value);
+
+        if ($constraint->performValidation()) {
+            return;
+        }
+
+        $displayValue = match (true) {
+            $value === null => '',
+            is_scalar($value) => (string)$value,
+            default => gettype($value),
+        };
+
+        $this->context->buildViolation($constraint->getFailMessage())
+            ->setParameter('{{ value }}', $displayValue)
+            ->addViolation();
     }
 }
