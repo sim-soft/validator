@@ -126,7 +126,8 @@ if ($validator->passes()) {
 
 ## Documentation
 
-For advanced features, see the [full documentation](docs/):
+For advanced features, see
+the [full documentation](https://sim-soft.github.io/validator/):
 
 - [Custom Rules with Closures](docs/custom-rules.md)
 - [Reusable Custom Constraints](docs/custom-constraints.md)
