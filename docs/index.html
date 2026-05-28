@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simsoft Validator - Laravel-inspired PHP Validation Library</title>
+    <meta name="description"
+          content="A lightweight, framework-independent PHP validation library wrapping Symfony Validator with a Laravel-inspired API. Supports custom rules, nested arrays, wildcards, and validation groups.">
+    <meta name="keywords"
+          content="PHP validator, Symfony validator wrapper, Laravel validation, PHP validation library, form validation PHP, input validation, custom constraints, PHP 8.4">
+    <meta name="author" content="Simsoft">
+    <meta name="robots" content="index, follow">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://sim-soft.github.io/validator/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Simsoft Validator - Laravel-inspired PHP Validation Library">
+    <meta property="og:description"
+          content="A lightweight PHP validation library wrapping Symfony Validator with Laravel-style API. Custom rules, nested arrays, wildcards, validation groups.">
+    <meta property="og:url" content="https://sim-soft.github.io/validator/">
+    <meta property="og:site_name" content="Simsoft Validator">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Simsoft Validator - Laravel-inspired PHP Validation Library">
+    <meta name="twitter:description"
+          content="A lightweight PHP validation library wrapping Symfony Validator with Laravel-style API. Custom rules, nested arrays, wildcards, validation groups.">
+
+    <!-- docsify-darklight-theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/dist/style.min.css"
+          title="docsify-darklight-theme" type="text/css">
+    <style>
+        .logo-text {
+            color: inherit !important;
+        }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareSourceCode",
+        "name": "Simsoft Validator",
+        "description": "A Laravel-inspired validation wrapper for Symfony Validator. Simple API, full power of Symfony constraints.",
+        "url": "https://sim-soft.github.io/validator/",
+        "codeRepository": "https://github.com/sim-soft/validator",
+        "programmingLanguage": "PHP",
+        "runtimePlatform": "PHP 8.4+",
+        "license": "https://opensource.org/licenses/MIT",
+        "operatingSystem": "Cross-platform",
+        "applicationCategory": "DeveloperApplication",
+        "keywords": [
+            "PHP",
+            "validation",
+            "Symfony",
+            "Laravel",
+            "form validation",
+            "input validation"
+        ]
+    }
+</script>
+
+<script>
+    window.$docsify = {
+        name: 'Simsoft Validator',
+        nameLink: 'https://sim-soft.github.io/validator/',
+        repo: 'https://github.com/sim-soft/validator',
+        loadSidebar: true,
+        subMaxLevel: 3,
+        auto2top: true,
+        search: {
+            placeholder: 'Search documentation',
+            noData: 'No results found',
+            depth: 3,
+            pathNamespaces: ['/']
+        },
+        darklightTheme: {
+            defaultTheme: 'light',
+            siteFont: 'Source Sans Pro, Helvetica Neue, Arial, sans-serif',
+            codeFontFamily: 'JetBrains Mono, Roboto Mono, Monaco, courier, monospace',
+            dark: {
+                accent: '#E8960C',
+                toogleBackground: '#1a1a2e',
+                background: '#1a1a2e',
+                textColor: '#e0e0e0',
+                codeBackgroundColor: '#0d1117'
+            },
+            light: {
+                accent: '#C47A08',
+                toogleBackground: '#fff',
+                background: '#fff',
+                textColor: '#1a1a1a',
+                codeBackgroundColor: '#f6f8fa'
+            }
+        }
+    };
+</script>
+
+<!-- Docsify -->
+<script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+
+<!-- Plugins -->
+<script src="https://cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/dist/index.min.js"
+        type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-php.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@2/dist/docsify-copy-code.min.js"></script>
+<script>
+    window.$docsify.plugins = (window.$docsify.plugins || []).concat(function (hook) {
+        hook.doneEach(function () {
+            var title = document.querySelector('.markdown-section h1');
+            document.title = 'Simsoft Validator' + (title ? ' - ' + title.textContent : '');
+        });
+    });
+</script>
+</body>
+</html>
