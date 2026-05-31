@@ -25,16 +25,18 @@ composer require simsoft/validator
 
 ```php
 use Simsoft\Validator;
+use Simsoft\Validator\Rule;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Sequentially;
 
 $validator = Validator::make($_POST, [
-    'email' => new Sequentially([
+    // bail: stops at first failure — only one error reported
+    'email' => Rule::bail([
         new NotBlank(message: 'Email is required'),
         new Email(message: 'Invalid email'),
     ]),
+    // array: runs all constraints — collects all errors
     'password' => [
         new NotBlank(message: 'Password is required'),
         new Length(
@@ -53,10 +55,9 @@ if ($validator->passes()) {
 }
 ```
 
-**`Sequentially` vs array rules:**
+**`Rule::bail()` vs array rules:**
 
-- `new Sequentially([...])` — stops at the first failing constraint (
-  short-circuit)
+- `Rule::bail([...])` — stops at the first failing constraint (short-circuit)
 - `[...]` (plain array) — runs all constraints and collects all violations
 
 ## Retrieving Validated Data
@@ -101,9 +102,9 @@ if ($validator->fails()) {
 namespace App\Validators;
 
 use Simsoft\Validator;
+use Simsoft\Validator\Rule;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Sequentially;
 
 class LoginValidator extends Validator
 {
@@ -112,7 +113,7 @@ class LoginValidator extends Validator
     protected function rules(): array
     {
         return [
-            'email' => new Sequentially([
+            'email' => Rule::bail([
                 new NotBlank(message: 'Email is required'),
                 new Email(message: 'Invalid email'),
             ]),

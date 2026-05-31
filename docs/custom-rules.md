@@ -35,23 +35,3 @@ $validator = Validator::make($_POST, [
     }),
 ]);
 ```
-
-## Bail on First Failure
-
-Use `Rule::bail()` to stop validating an attribute at the first failing
-constraint. Equivalent to `Sequentially` but more readable.
-
-```php
-use Simsoft\Validator\Rule;
-use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\NotBlank;
-
-$validator = Validator::make($_POST, [
-    'email' => Rule::bail([
-        new NotBlank(message: 'Email is required'),
-        new Email(message: 'Invalid email'),
-    ]),
-]);
-
-// If email is blank, only "Email is required" is reported.
-```

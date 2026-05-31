@@ -10,10 +10,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- `after()` method for cross-field validation hooks
-- `Rule::sometimes()` for optional field validation (skip when null)
 - `Rule::bail()` for per-attribute short-circuit validation (stop at first
   failure)
+- `Rule::sometimes()` for optional field validation (skip when null)
+- `after()` method for cross-field validation hooks
 - `sometimes()` instance method for conditionally applying rules based on input
   data
 - Nested array validation via dot notation (`'address.city'`)
@@ -22,12 +22,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `messages()` override in custom validator classes for per-attribute error
   messages
 - `Countable` interface on `Errors` and `ValidatedInput` — supports `count()`
-- `Errors::reset()`, `Errors::toArray()`, `ValidatedInput::reset()`,
-  `ValidatedInput::toArray()`
 - `ValidatedInput::has()` — check if an attribute was validated
+- `ValidatedInput::toArray()` and `Errors::toArray()` — alias for `all()`
+- `Errors::reset()` and `ValidatedInput::reset()` methods
 - All violations per attribute are now collected (not just the first)
 - Cached Symfony validator instance for performance
 - GitHub Actions CI workflow
+- Docsify documentation site with dark/light theme
 
 ### Changed
 
@@ -38,6 +39,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `requiredIf()` uses strict null/empty-string check instead of `empty()`
 - `setData()` resets validation state (errors and validated data cleared)
 - `CustomConstraintValidator` safely handles non-scalar values
+- Documentation uses `Rule::bail()` instead of `Sequentially`
 
 ### Fixed
 
@@ -50,5 +52,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Removed
 
+- `Validator::extend()` (dead code with no consumer)
 - `ValidatedInput::$hasNext` and `Errors::$hasNext` properties (replaced by
   `IteratorAggregate`)

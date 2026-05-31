@@ -17,16 +17,18 @@ Use `Validator::make()` to validate an array of input against a set of rules.
 
 ```php
 use Simsoft\Validator;
+use Simsoft\Validator\Rule;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Sequentially;
 
 $validator = Validator::make($_POST, [
-    'email' => new Sequentially([
+    // bail: stops at first failure — only one error reported
+    'email' => Rule::bail([
         new NotBlank(message: 'Email is required'),
         new Email(message: 'Invalid email'),
     ]),
+    // array: runs all constraints — collects all errors
     'password' => [
         new NotBlank(message: 'Password is required'),
         new Length(
@@ -45,11 +47,13 @@ if ($validator->passes()) {
 }
 ```
 
-## Sequentially vs Array Rules
+## `Rule::bail()` vs Array Rules
 
-- `new Sequentially([...])` — stops at the first failing constraint (
-  short-circuit)
-- `[...]` (plain array) — runs all constraints and collects all violations
+- `Rule::bail([...])` — stops at the first failing constraint (short-circuit).
+  Use when later constraints depend on earlier ones passing (e.g., check not
+  blank before checking email format).
+- `[...]` (plain array) — runs all constraints and collects all violations. Use
+  when you want to show all errors at once.
 
 ## Retrieving Validated Data
 
@@ -106,9 +110,9 @@ For reusable validation logic, extend the `Validator` class.
 namespace App\Validators;
 
 use Simsoft\Validator;
+use Simsoft\Validator\Rule;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Sequentially;
 
 class LoginValidator extends Validator
 {
@@ -117,7 +121,7 @@ class LoginValidator extends Validator
     protected function rules(): array
     {
         return [
-            'email' => new Sequentially([
+            'email' => Rule::bail([
                 new NotBlank(message: 'Email is required'),
                 new Email(message: 'Invalid email'),
             ]),
@@ -126,6 +130,24 @@ class LoginValidator extends Validator
     }
 }
 ```
+
+**The `$attributes` property** defines which input fields the validator expects.
+It controls what `setData()` extracts from the input array:
+
+- `'email'` — expects an `email` key, defaults to `null` if missing from input
+- `'password'` — expects a `password` key, defaults to `null` if missing
+- `'remember_me' => false` — expects a `remember_me` key, defaults to `false` if
+  missing
+
+Any input keys not listed in `$attributes` are ignored. If you omit
+`$attributes`, the validator infers them from the keys in `rules()`.
+
+```php
+// Input: ['email' => 'a@b.com', 'password' => 'secret', 'extra' => 'ignored']
+// $validator->all() returns: ['email' => 'a@b.com', 'password' => 'secret', 'remember_me' => false]
+```
+
+Usage:
 
 ```php
 $validator = LoginValidator::make($_POST);
