@@ -28,7 +28,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - All violations per attribute are now collected (not just the first)
 - Cached Symfony validator instance for performance
 - GitHub Actions CI workflow
-- Docsify documentation site with dark/light theme
+- Docsify documentation site with a dark / light theme
+- Constraints Reference page with copy-paste examples for 30+ constraints
+- "Why Object-Based Rules?" explainer page
 
 ### Changed
 

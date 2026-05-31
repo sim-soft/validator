@@ -162,44 +162,12 @@ if ($validator->passes()) {
 ## Available Constraints
 
 The examples above use `NotBlank`, `Email`, and `Length` — but there are many
-more. Each constraint is a class you import from
-`Symfony\Component\Validator\Constraints`:
-
-```php
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\Url;
-use Symfony\Component\Validator\Constraints\Regex;
-use Symfony\Component\Validator\Constraints\Range;
-use Symfony\Component\Validator\Constraints\Choice;
-// ... and many more
-```
-
-Here are the most commonly used ones:
-
-| Constraint | What it checks        | Example                                                  |
-|------------|-----------------------|----------------------------------------------------------|
-| `NotBlank` | Not null/empty        | `new NotBlank(message: 'Required')`                      |
-| `Length`   | String min/max length | `new Length(min: 2, max: 100)`                           |
-| `Email`    | Valid email format    | `new Email(message: 'Invalid email')`                    |
-| `Url`      | Valid URL             | `new Url(message: 'Invalid URL')`                        |
-| `Regex`    | Matches a pattern     | `new Regex(pattern: '/^\d+$/', message: 'Numbers only')` |
-| `Range`    | Number within range   | `new Range(min: 1, max: 100)`                            |
-| `Choice`   | Value in allowed list | `new Choice(choices: ['active', 'inactive'])`            |
-| `Type`     | PHP type check        | `new Type(type: 'integer')`                              |
-| `Positive` | Greater than zero     | `new Positive()`                                         |
-| `Date`     | Valid date string     | `new Date()`                                             |
-
-Every constraint accepts a `message` parameter to customize the error text, and
-a `groups` parameter for [Validation Groups](validation-groups.md).
-
-For the full list of 70+ constraints (numbers, strings, dates, files,
-comparison, etc.), see
-the [Symfony Constraints Reference](https://symfony.com/doc/current/validation.html#constraints).
+more. See the [Constraints Reference](constraints-reference.md) for a full list
+with copy-paste examples.
 
 ## Next Steps
 
+- [Constraints Reference](constraints-reference.md)
 - [Custom Rules with Closures](custom-rules.md)
 - [Reusable Custom Constraints](custom-constraints.md)
 - [Nested & Wildcard Array Validation](array-validation.md)
