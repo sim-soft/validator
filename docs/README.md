@@ -1,5 +1,7 @@
 # Simsoft Validator
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
 > A lightweight, framework-independent PHP validation library wrapping Symfony
 > Validator with a Laravel-inspired API.
 
@@ -11,19 +13,19 @@
 - **Custom rules** — closures or reusable constraint classes
 - **Nested & wildcard validation** — `address.city`, `items.*.name`
 - **Validation groups** — apply different rules per context
-- **After hooks** — cross-field validation (e.g. password confirmation)
+- **After hooks** — cross-field validation (e.g., password confirmation)
 - **No framework coupling** — works in any PHP 8.4+ project
 
 ## Quick Example
 
 ```php
 use Simsoft\Validator;
+use Simsoft\Validator\Rule;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Sequentially;
 
 $validator = Validator::make($_POST, [
-    'email' => new Sequentially([
+    'email' => Rule::bail([
         new NotBlank(message: 'Email is required'),
         new Email(message: 'Invalid email'),
     ]),

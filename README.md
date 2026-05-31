@@ -1,8 +1,14 @@
 # Simsoft Validator
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![GitHub](https://img.shields.io/badge/GitHub-sim--soft%2Fvalidator-181717.svg?logo=github)](https://github.com/sim-soft/validator)
+[![Docs](https://img.shields.io/badge/docs-online-blue.svg)](https://sim-soft.github.io/validator/)
+
 A Laravel-inspired validation wrapper
 for [Symfony Validator](https://symfony.com/doc/current/validation.html). Simple
 API, full power of Symfony constraints.
+
+**📖 [Full Documentation](https://sim-soft.github.io/validator/)**
 
 ## Requirements
 
@@ -19,16 +25,18 @@ composer require simsoft/validator
 
 ```php
 use Simsoft\Validator;
+use Simsoft\Validator\Rule;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Sequentially;
 
 $validator = Validator::make($_POST, [
-    'email' => new Sequentially([
+    // bail: stops at first failure — only one error reported
+    'email' => Rule::bail([
         new NotBlank(message: 'Email is required'),
         new Email(message: 'Invalid email'),
     ]),
+    // array: runs all constraints — collects all errors
     'password' => [
         new NotBlank(message: 'Password is required'),
         new Length(
@@ -47,10 +55,9 @@ if ($validator->passes()) {
 }
 ```
 
-**`Sequentially` vs array rules:**
+**`Rule::bail()` vs array rules:**
 
-- `new Sequentially([...])` — stops at the first failing constraint (
-  short-circuit)
+- `Rule::bail([...])` — stops at the first failing constraint (short-circuit)
 - `[...]` (plain array) — runs all constraints and collects all violations
 
 ## Retrieving Validated Data
@@ -95,9 +102,9 @@ if ($validator->fails()) {
 namespace App\Validators;
 
 use Simsoft\Validator;
+use Simsoft\Validator\Rule;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Sequentially;
 
 class LoginValidator extends Validator
 {
@@ -106,7 +113,7 @@ class LoginValidator extends Validator
     protected function rules(): array
     {
         return [
-            'email' => new Sequentially([
+            'email' => Rule::bail([
                 new NotBlank(message: 'Email is required'),
                 new Email(message: 'Invalid email'),
             ]),
@@ -126,17 +133,17 @@ if ($validator->passes()) {
 
 ## Documentation
 
-For advanced features, see
-the [full documentation](https://sim-soft.github.io/validator/):
+**📖 [Read the Full Documentation](https://sim-soft.github.io/validator/)**
 
-- [Custom Rules with Closures](docs/custom-rules.md)
-- [Reusable Custom Constraints](docs/custom-constraints.md)
-- [Validation Groups](docs/validation-groups.md)
-- [Nested & Wildcard Array Validation](docs/array-validation.md)
-- [Conditional & Optional Rules](docs/conditional-rules.md)
-- [After Hooks & Cross-Field Validation](docs/after-hooks.md)
-- [Runtime Rules & Configuration](docs/runtime-rules.md)
-- [Comparison with Other Validators](docs/comparison.md)
+- [Getting Started](https://sim-soft.github.io/validator/#/getting-started)
+- [Custom Rules with Closures](https://sim-soft.github.io/validator/#/custom-rules)
+- [Reusable Custom Constraints](https://sim-soft.github.io/validator/#/custom-constraints)
+- [Validation Groups](https://sim-soft.github.io/validator/#/validation-groups)
+- [Nested & Wildcard Array Validation](https://sim-soft.github.io/validator/#/array-validation)
+- [Conditional & Optional Rules](https://sim-soft.github.io/validator/#/conditional-rules)
+- [After Hooks & Cross-Field Validation](https://sim-soft.github.io/validator/#/after-hooks)
+- [Runtime Rules & Configuration](https://sim-soft.github.io/validator/#/runtime-rules)
+- [Comparison with Other Validators](https://sim-soft.github.io/validator/#/comparison)
 
 ## Available Constraints
 

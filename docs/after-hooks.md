@@ -38,9 +38,9 @@ custom message replaces all constraint messages for that attribute.
 namespace App\Validators;
 
 use Simsoft\Validator;
+use Simsoft\Validator\Rule;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Sequentially;
 
 class ContactValidator extends Validator
 {
@@ -49,7 +49,7 @@ class ContactValidator extends Validator
     protected function rules(): array
     {
         return [
-            'email' => new Sequentially([
+            'email' => Rule::bail([
                 new NotBlank(),
                 new Email(),
             ]),

@@ -6,13 +6,13 @@ Add constraints to the validator after creation with `addRule()`.
 
 ```php
 use Simsoft\Validator;
+use Simsoft\Validator\Rule;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Sequentially;
 
 $validator = Validator::make($_POST, [], ['email', 'password']);
 
-$validator->addRule('password', new Sequentially([
+$validator->addRule('password', Rule::bail([
     new NotBlank(message: 'Password is required'),
     new Length(
         min: 8,

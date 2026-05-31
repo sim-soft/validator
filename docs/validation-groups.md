@@ -6,14 +6,14 @@ registration).
 
 ```php
 use Simsoft\Validator;
+use Simsoft\Validator\Rule;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
-use Symfony\Component\Validator\Constraints\Sequentially;
 
 $validator = Validator::make($_POST, [
-    'email' => new Sequentially([
+    'email' => Rule::bail([
         new NotBlank(message: 'Email is required', groups: ['login', 'register']),
         new Email(message: 'Invalid email', groups: ['login', 'register']),
     ]),
