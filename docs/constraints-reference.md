@@ -21,8 +21,8 @@ This page shows how to use the most common ones — copy-paste ready.
 - [Locale Constraints](#locale-constraints) — Country, Currency, Language,
   Timezone
 - [Password Constraint](#password-constraint) — PasswordStrength
-- [Combining Multiple Constraints](#combining-multiple-constraints) — bail vs.
-  an array
+- [Combining Multiple Constraints](#combining-multiple-constraints) — bail,
+  each, anyOf, array
 - [Common Patterns](#common-patterns) — Email, optional, dropdown, numeric, file
   upload
 
@@ -49,6 +49,19 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 'field' => new NotNull(message: 'This field must be provided')
 ```
+
+**NotBlank vs NotNull:**
+
+```php
+// NotBlank — rejects null AND empty strings
+// ✅ "hello"    ❌ ""    ❌ null    ❌ "   " (whitespace only)
+
+// NotNull — only rejects null
+// ✅ "hello"    ✅ ""    ❌ null    ✅ "   "
+```
+
+Use `NotBlank` for most form fields. Use `NotNull` when an empty string is a
+valid value (e.g. an optional notes field that must be explicitly submitted).
 
 ### Blank — Field must be empty
 
@@ -113,6 +126,17 @@ use Symfony\Component\Validator\Constraints\Regex;
     message: 'Invalid phone number',
 )
 ```
+
+**Common regex patterns for beginners:**
+
+| What you want      | Pattern              | Accepts           | Rejects      |
+|--------------------|----------------------|-------------------|--------------|
+| Letters only       | `/^[a-zA-Z]+$/`      | `Hello`           | `Hello123`   |
+| Alphanumeric       | `/^\w+$/`            | `user123`         | `user@123`   |
+| Slug (URL-safe)    | `/^[a-z0-9\-]+$/`    | `my-post-title`   | `My Post!`   |
+| Phone (basic)      | `/^\+?[\d\s\-()]+$/` | `+60 12-345 6789` | `call me`    |
+| No spaces          | `/^\S+$/`            | `nospaces`        | `has spaces` |
+| Starts with letter | `/^[a-zA-Z]/`        | `abc123`          | `123abc`     |
 
 ### Uuid — Valid UUID
 
@@ -309,6 +333,11 @@ use Symfony\Component\Validator\Constraints\Unique;
 'categories' => new Unique(message: 'Each category must be unique')
 ```
 
+```php
+// ✅ Passes: ['php', 'javascript', 'python']
+// ❌ Fails:  ['php', 'javascript', 'php']    — "php" appears twice
+```
+
 ## Boolean Constraints
 
 ### IsTrue — Value must be true
@@ -330,6 +359,85 @@ use Symfony\Component\Validator\Constraints\IsFalse;
 ```
 
 ## File Constraints
+
+File, Image, and Video constraints validate a **file path** (the temporary
+upload path). Here's the full flow from HTML form to validation.
+
+**HTML form:**
+
+```html
+<form method="POST" enctype="multipart/form-data">
+    <input type="file" name="avatar">
+    <input type="file" name="document">
+    <input type="file" name="clip">
+    <button type="submit">Upload</button>
+</form>
+```
+
+**PHP — pass the temp file path to the validator:**
+
+```php
+use Simsoft\Validator;
+use Simsoft\Validator\Rule;
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\Image;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Video;
+
+// Extract temp paths from $_FILES
+$input = [
+    'avatar' => $_FILES['avatar']['tmp_name'] ?? null,
+    'document' => $_FILES['document']['tmp_name'] ?? null,
+    'clip' => $_FILES['clip']['tmp_name'] ?? null,
+];
+
+$validator = Validator::make($input, [
+    'avatar' => Rule::bail([
+        new NotBlank(message: 'Please upload a profile photo'),
+        new Image(
+            maxSize: '5M',
+            mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+            mimeTypesMessage: 'Only JPEG, PNG, or WebP images are accepted',
+        ),
+    ]),
+    'document' => Rule::bail([
+        new NotBlank(message: 'Please upload a document'),
+        new File(
+            maxSize: '10M',
+            mimeTypes: ['application/pdf'],
+            mimeTypesMessage: 'Only PDF files are accepted',
+        ),
+    ]),
+    'clip' => Rule::bail([
+        new NotBlank(message: 'Please upload a video'),
+        new Video(
+            maxSize: '100M',
+            mimeTypes: ['video/mp4', 'video/webm'],
+            mimeTypesMessage: 'Only MP4 or WebM videos are accepted',
+        ),
+    ]),
+]);
+
+if ($validator->fails()) {
+    echo $validator->errors()->first('avatar');
+    echo $validator->errors()->first('document');
+    echo $validator->errors()->first('clip');
+}
+```
+
+> **Important:** The validator checks the file at
+`$_FILES['field']['tmp_name']` — the temporary path where PHP stores the upload.
+> Pass this path as the value, not the full `$_FILES` array.
+
+**`maxSize` format:** Use a number followed by a unit suffix:
+
+| Format    | Meaning                    |
+|-----------|----------------------------|
+| `'500k'`  | 500 kilobytes              |
+| `'2M'`    | 2 megabytes                |
+| `'1G'`    | 1 gigabyte                 |
+| `'500Ki'` | 500 kibibytes (1024-based) |
+| `'2Mi'`   | 2 mebibytes (1024-based)   |
 
 ### File — Validate an uploaded file (type and size)
 
@@ -433,15 +541,19 @@ use Symfony\Component\Validator\Constraints\Bic;
 
 ## Locale Constraints
 
-### Country — Valid ISO 3166-1 country code
+### Country — Valid ISO country code
 
 ```php
 use Symfony\Component\Validator\Constraints\Country;
 
+// 2-letter code (ISO 3166-1 alpha-2) — default
 'country' => new Country(message: 'Invalid country code')
-```
+// Accepts: US, GB, MY, SG, etc.
 
-Accepts: `US`, `GB`, `MY`, `SG`, etc.
+// 3-letter code (ISO 3166-1 alpha-3)
+'country' => new Country(alpha3: true, message: 'Invalid country code')
+// Accepts: USA, GBR, MYS, SGP, etc.
+```
 
 ### Currency — Valid ISO 4217 currency code
 
@@ -486,28 +598,139 @@ use Symfony\Component\Validator\Constraints\PasswordStrength;
 )
 ```
 
-Strength levels: `STRENGTH_WEAK`, `STRENGTH_MEDIUM`, `STRENGTH_STRONG`,
-`STRENGTH_VERY_STRONG`
+**Strength levels explained:**
+
+| Level                  | Score | What it expects                                   |
+|------------------------|-------|---------------------------------------------------|
+| `STRENGTH_WEAK`        | 1     | Very basic — short or common patterns             |
+| `STRENGTH_MEDIUM`      | 2     | Mix of letters and numbers                        |
+| `STRENGTH_STRONG`      | 3     | Mix of uppercase, lowercase, numbers, and symbols |
+| `STRENGTH_VERY_STRONG` | 4     | Long, highly varied characters                    |
+
+The score is calculated by Symfony based on character variety and length — you
+don't need to define the rules yourself.
 
 ## Combining Multiple Constraints
 
-Use `Rule::bail()` to stop at the first failure, or an array to collect all
-errors:
+### Error message placeholders
+
+Many constraints use `{{ }}` placeholders in messages that Symfony automatically
+replaces with actual values:
+
+```php
+new Length(
+    min: 8,
+    max: 20,
+    minMessage: 'Must be at least {{ limit }} characters',  // {{ limit }} becomes "8"
+    maxMessage: 'Cannot exceed {{ limit }} characters',     // {{ limit }} becomes "20"
+)
+
+new Range(
+    min: 1,
+    max: 100,
+    notInRangeMessage: 'Must be between {{ min }} and {{ max }}', // becomes "1" and "100"
+)
+
+new Choice(
+    choices: ['a', 'b', 'c'],
+    message: 'Choose from: {{ choices }}', // becomes "a, b, c"
+)
+```
+
+Common placeholders: `{{ limit }}`, `{{ min }}`, `{{ max }}`, `{{ value }}`,
+`{{ choices }}`. Each constraint documents which placeholders it supports.
+
+### When to use which `Rule::` method
+
+| Method                   | Purpose                                 | Example use case                      |
+|--------------------------|-----------------------------------------|---------------------------------------|
+| `Rule::bail([...])`      | Stop at first failure                   | Email: check not blank, then format   |
+| `[...]` (array)          | Run all, collect all errors             | Password: show all issues at once     |
+| `Rule::each([...])`      | Validate every item in an array         | All tags must be non-empty strings    |
+| `Rule::anyOf([...])`     | Pass if at least one constraint matches | Contact: accept email OR phone        |
+| `Rule::sometimes(fn)`    | Skip validation when value is null      | Optional nickname field               |
+| `Rule::requiredIf(cond)` | Required only when condition is true    | Confirm password when password filled |
+| `Rule::make(fn)`         | Fully custom logic                      | Complex business rules                |
+
+### Rule::bail() — Stop at first failure
+
+```php
+'email' => Rule::bail([
+    new NotBlank(message: 'Email is required'),
+    new Email(message: 'Invalid email'),
+])
+```
+
+### Rule::each() — Validate every array item
+
+Use when the value is an array and each item must pass the same constraints.
+
+> **`[...]` vs `Rule::each([...])`** — these are different things:
+>
+> - `[...]` = multiple rules on **one value** (e.g. a name string must be not
+    blank AND under 100 chars)
+> - `Rule::each([...])` = rules applied to **every item inside an array value
+    ** (e.g. each tag must be not blank)
+
+**Example: a form with a name field and a hobbies field**
+
+```
+Name: [John Smith]           ← single string
+Hobbies: [reading, gaming]   ← array of strings
+```
+
+```php
+// Array [...] — checks the name string itself
+'name' => [
+    new NotBlank(),       // "John Smith" is not empty? ✅
+    new Length(max: 100), // "John Smith" under 100 chars? ✅
+]
+
+// Rule::each([...]) — checks EACH item inside the hobbies array
+'hobbies' => Rule::each([
+    new NotBlank(),       // "reading" not empty? ✅  "gaming" not empty? ✅
+    new Length(max: 30),  // "reading" under 30? ✅  "gaming" under 30? ✅
+])
+```
+
+Full example:
+
+```php
+use Simsoft\Validator\Rule;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+// Every tag must be a non-empty string with max 50 chars
+'tags' => Rule::each([
+    new NotBlank(message: 'Tag cannot be empty'),
+    new Length(max: 50, maxMessage: 'Tag too long'),
+])
+```
+
+**What happens when `each()` fails?** The error is reported on the field
+itself (e.g. `tags`), not on individual items. If you need per-item error
+reporting, use [Wildcard Array Validation](array-validation.md) (`items.*.name`)
+instead.
+
+### Rule::anyOf() — Pass if any one constraint matches
+
+Use when a field accepts multiple formats (e.g. email or phone number).
 
 ```php
 use Simsoft\Validator\Rule;
 use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
-// Stop at first failure
-'email' => Rule::bail([
-    new NotBlank(message: 'Email is required'),
-    new Length(max: 255, maxMessage: 'Email too long'),
-    new Email(message: 'Invalid email format'),
-])
+// Accept either a valid email or a phone number
+'contact' => Rule::anyOf([
+    new Email(),
+    new Regex(pattern: '/^\+?[\d\s\-()]+$/', message: 'Invalid phone'),
+], message: 'Must be a valid email or phone number')
+```
 
-// Collect all errors
+### Array — Collect all errors
+
+```php
 'password' => [
     new NotBlank(message: 'Password is required'),
     new Length(min: 8, minMessage: 'At least 8 characters'),

@@ -13,6 +13,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `Rule::bail()` for per-attribute short-circuit validation (stop at first
   failure)
 - `Rule::sometimes()` for optional field validation (skip when null)
+- `Rule::each()` for validating every item in an array value
+- `Rule::anyOf()` for passing if at least one constraint matches
 - `after()` method for cross-field validation hooks
 - `sometimes()` instance method for conditionally applying rules based on input
   data

@@ -5,6 +5,8 @@ namespace Simsoft\Validator;
 use Closure;
 use Simsoft\Validator\Constraints\Custom;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\All;
+use Symfony\Component\Validator\Constraints\AtLeastOneOf;
 use Symfony\Component\Validator\Constraints\Sequentially;
 
 /**
@@ -83,8 +85,6 @@ class Rule
     /**
      * Wrap constraints to stop at the first failure (short-circuit).
      *
-     * Equivalent to wrapping in `Sequentially`, but more readable.
-     *
      * @param array<Constraint> $constraints Constraints to apply sequentially.
      * @param array|null $groups Validation groups.
      * @return Constraint
@@ -92,5 +92,34 @@ class Rule
     public static function bail(array $constraints, ?array $groups = null): Constraint
     {
         return new Sequentially($constraints, groups: $groups);
+    }
+
+    /**
+     * Apply constraints to every item in an array value.
+     *
+     * @param array<Constraint> $constraints Constraints each item must pass.
+     * @param array|null $groups Validation groups.
+     * @return Constraint
+     */
+    public static function each(array $constraints, ?array $groups = null): Constraint
+    {
+        return new All($constraints, groups: $groups);
+    }
+
+    /**
+     * Value must pass at least one of the given constraints.
+     *
+     * @param array<Constraint> $constraints Constraints to try (passes if any one succeeds).
+     * @param string $message Error message when none pass.
+     * @param array|null $groups Validation groups.
+     * @return Constraint
+     */
+    public static function anyOf(
+        array  $constraints,
+        string $message = 'This value should satisfy at least one of the following constraints.',
+        ?array $groups = null
+    ): Constraint
+    {
+        return new AtLeastOneOf($constraints, message: $message, groups: $groups);
     }
 }
