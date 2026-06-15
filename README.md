@@ -1,5 +1,9 @@
 # Simsoft Validator
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![PHP](https://img.shields.io/badge/PHP-8.4%2B-777BB4.svg?logo=php&logoColor=white)](https://www.php.net/)
+[![Docs](https://img.shields.io/badge/docs-online-blue.svg)](https://sim-soft.github.io/validator/)
+
 A Laravel-inspired validation wrapper
 for [Symfony Validator](https://symfony.com/doc/current/validation.html). Simple
 API, full power of Symfony constraints.

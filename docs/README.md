@@ -1,5 +1,8 @@
 # Simsoft Validator
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![PHP](https://img.shields.io/badge/PHP-8.4%2B-777BB4.svg?logo=php&logoColor=white)](https://www.php.net/)
+
 > A lightweight, framework-independent PHP validation library wrapping Symfony
 > Validator with a Laravel-inspired API.
 
