@@ -1,10 +1,11 @@
-- **Introduction**
+- Introduction
     - [About](/)
 
-- **Getting Started**
+- Getting Started
     - [Usage Guide](getting-started.md)
+  - [Constraints Reference](constraints-reference.md)
 
-- **Advanced Usage**
+- Advanced Usage
     - [Custom Rules](custom-rules.md)
     - [Custom Constraints](custom-constraints.md)
     - [Validation Groups](validation-groups.md)
@@ -13,8 +14,9 @@
     - [After Hooks](after-hooks.md)
     - [Runtime Rules](runtime-rules.md)
 
-- **Quick Reference**
+- Quick Reference
     - [Comparison](comparison.md)
+  - [Why Object-Based Rules?](why-objects.md)
 
 <div style="text-align:center;margin:20px 0">
     <a href="https://github.com/sim-soft" target="_blank" style="text-decoration:none">

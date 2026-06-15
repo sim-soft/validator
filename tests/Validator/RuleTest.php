@@ -8,6 +8,7 @@ use Simsoft\Validator\Rule;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 /**
  * RuleTest class
@@ -270,5 +271,88 @@ class RuleTest extends TestCase
         ], groups: ['login']);
 
         $this->assertContains('login', $rule->groups);
+    }
+
+    // ─── each() ──────────────────────────────────────────────────────
+
+    #[Test]
+    public function eachValidatesEveryArrayItem(): void
+    {
+        $validator = Validator::make(
+            ['tags' => ['php', '', 'js']],
+            ['tags' => Rule::each([new NotBlank(message: 'Tag cannot be empty')])],
+            ['tags']
+        );
+
+        $this->assertFalse($validator->validate());
+    }
+
+    #[Test]
+    public function eachPassesWhenAllItemsValid(): void
+    {
+        $validator = Validator::make(
+            ['tags' => ['php', 'js', 'go']],
+            ['tags' => Rule::each([new NotBlank()])],
+            ['tags']
+        );
+
+        $this->assertTrue($validator->validate());
+    }
+
+    #[Test]
+    public function eachPassesWithEmptyArray(): void
+    {
+        $validator = Validator::make(
+            ['tags' => []],
+            ['tags' => Rule::each([new NotBlank()])],
+            ['tags']
+        );
+
+        $this->assertTrue($validator->validate());
+    }
+
+    // ─── anyOf() ─────────────────────────────────────────────────────
+
+    #[Test]
+    public function anyOfPassesWhenOneConstraintMatches(): void
+    {
+        $validator = Validator::make(
+            ['contact' => 'user@example.com'],
+            ['contact' => Rule::anyOf([
+                new Email(),
+                new Regex(pattern: '/^\+?\d+$/'),
+            ])]
+        );
+
+        $this->assertTrue($validator->validate());
+    }
+
+    #[Test]
+    public function anyOfPassesWithSecondConstraint(): void
+    {
+        $validator = Validator::make(
+            ['contact' => '+60123456789'],
+            ['contact' => Rule::anyOf([
+                new Email(),
+                new Regex(pattern: '/^\+?\d+$/'),
+            ])]
+        );
+
+        $this->assertTrue($validator->validate());
+    }
+
+    #[Test]
+    public function anyOfFailsWhenNoConstraintMatches(): void
+    {
+        $validator = Validator::make(
+            ['contact' => 'not-email-or-phone'],
+            ['contact' => Rule::anyOf([
+                new Email(),
+                new Regex(pattern: '/^\+?\d+$/'),
+            ], message: 'Must be an email or phone number')]
+        );
+
+        $this->assertFalse($validator->validate());
+        $this->assertStringContainsString('Must be an email or phone number', $validator->errors()->first('contact'));
     }
 }
