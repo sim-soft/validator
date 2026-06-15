@@ -118,7 +118,7 @@ class Validator
     }
 
     /**
-     * Get the errors collection.
+     * Get the errors' collection.
      *
      * @return Errors
      */
@@ -147,7 +147,7 @@ class Validator
      *
      * @param string $attribute The attribute name (supports dot notation).
      * @param array|Constraint $rules Constraints to apply.
-     * @param Closure $condition Closure receiving input array, returns bool.
+     * @param Closure $condition Closure receiving an input array, returns bool.
      * @return static
      */
     public function sometimes(string $attribute, array|Constraint $rules, Closure $condition): static
@@ -388,9 +388,10 @@ class Validator
      * Get a value from input using dot notation.
      *
      * @param string $key The dot-notated key (e.g. 'address.city').
+     * @param mixed|null $default Default value if the key is not found.
      * @return mixed
      */
-    private function getValue(string $key): mixed
+    public function getValue(string $key, mixed $default = null): mixed
     {
         if (array_key_exists($key, $this->input)) {
             return $this->input[$key];
@@ -401,7 +402,7 @@ class Validator
 
         foreach ($segments as $segment) {
             if (!is_array($value) || !array_key_exists($segment, $value)) {
-                return null;
+                return $default;
             }
             $value = $value[$segment];
         }
