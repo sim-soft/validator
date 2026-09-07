@@ -46,7 +46,7 @@ if ($validator->passes()) {
 ## Requirements
 
 - PHP >= 8.4
-- Symfony Validator ^8
+- Symfony Validator ^8.1
 
 A few specialised constraints (`Country`, `Currency`, `Language`, `Bic`,
 `Video`) need an extra Symfony component — see

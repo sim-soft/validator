@@ -1,0 +1,469 @@
+﻿2026-09-07T04:34:57.9897102Z Current runner version: '2.337.0'
+2026-09-07T04:34:57.9917147Z ##[group]Runner Image Provisioner
+2026-09-07T04:34:57.9917889Z Hosted Compute Agent
+2026-09-07T04:34:57.9918325Z Version: 20260828.587
+2026-09-07T04:34:57.9918794Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-07T04:34:57.9919293Z Build Date: 2026-08-28T16:44:25Z
+2026-09-07T04:34:57.9919743Z Worker ID: {3007708c-df60-4df9-a330-c3de76a1a107}
+2026-09-07T04:34:57.9920254Z Azure Region: centralus
+2026-09-07T04:34:57.9920652Z ##[endgroup]
+2026-09-07T04:34:57.9921916Z ##[group]Operating System
+2026-09-07T04:34:57.9922356Z Ubuntu
+2026-09-07T04:34:57.9922711Z 24.04.4
+2026-09-07T04:34:57.9923074Z LTS
+2026-09-07T04:34:57.9923457Z ##[endgroup]
+2026-09-07T04:34:57.9923849Z ##[group]Runner Image
+2026-09-07T04:34:57.9924270Z Image: ubuntu-24.04
+2026-09-07T04:34:57.9924647Z Version: 20260831.293.1
+2026-09-07T04:34:57.9925593Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260831.293/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-07T04:34:57.9926653Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260831.293
+2026-09-07T04:34:57.9927325Z ##[endgroup]
+2026-09-07T04:34:57.9929468Z ##[group]GITHUB_TOKEN Permissions
+2026-09-07T04:34:57.9931407Z Actions: write
+2026-09-07T04:34:57.9931846Z ArtifactMetadata: write
+2026-09-07T04:34:57.9932291Z Attestations: write
+2026-09-07T04:34:57.9932683Z Checks: write
+2026-09-07T04:34:57.9933070Z CodeQuality: write
+2026-09-07T04:34:57.9933468Z Contents: write
+2026-09-07T04:34:57.9933866Z CopilotRequests: write
+2026-09-07T04:34:57.9934303Z Deployments: write
+2026-09-07T04:34:57.9934678Z Discussions: write
+2026-09-07T04:34:57.9935036Z Drives: write
+2026-09-07T04:34:57.9935418Z Issues: write
+2026-09-07T04:34:57.9935819Z Metadata: read
+2026-09-07T04:34:57.9936300Z Models: read
+2026-09-07T04:34:57.9936669Z Packages: write
+2026-09-07T04:34:57.9937029Z Pages: write
+2026-09-07T04:34:57.9937417Z PullRequests: write
+2026-09-07T04:34:57.9937851Z RepositoryProjects: write
+2026-09-07T04:34:57.9938277Z SecurityEvents: write
+2026-09-07T04:34:57.9938673Z Statuses: write
+2026-09-07T04:34:57.9939048Z VulnerabilityAlerts: read
+2026-09-07T04:34:57.9939497Z ##[endgroup]
+2026-09-07T04:34:57.9941266Z Secret source: Actions
+2026-09-07T04:34:57.9941994Z Prepare workflow directory
+2026-09-07T04:34:58.0181917Z Prepare all required actions
+2026-09-07T04:34:58.0219600Z Getting action download info
+2026-09-07T04:34:58.2580231Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-07T04:34:58.5281367Z Download action repository 'shivammathur/setup-php@v2' (SHA:f3e473d116dcccaddc5834248c87452386958240)
+2026-09-07T04:34:58.7606840Z Download action repository 'ramsey/composer-install@v3' (SHA:a8d0d959dab41457692a5e2041bd9b757a119e3f)
+2026-09-07T04:34:58.9745051Z Getting action download info
+2026-09-07T04:34:59.0583205Z Download action repository 'actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809' (SHA:0400d5f644dc74513175e3cd8d07132dd4860809)
+2026-09-07T04:34:59.3684257Z Complete job name: PHP 8.4 (lowest deps)
+2026-09-07T04:34:59.4236733Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-07T04:34:59.4243980Z ##[group]Run actions/checkout@v4
+2026-09-07T04:34:59.4244623Z with:
+2026-09-07T04:34:59.4245004Z   repository: sim-soft/validator
+2026-09-07T04:34:59.4248688Z   token: ***
+2026-09-07T04:34:59.4249071Z   ssh-strict: true
+2026-09-07T04:34:59.4249482Z   ssh-user: git
+2026-09-07T04:34:59.4249908Z   persist-credentials: true
+2026-09-07T04:34:59.4250330Z   clean: true
+2026-09-07T04:34:59.4250938Z   sparse-checkout-cone-mode: true
+2026-09-07T04:34:59.4251452Z   fetch-depth: 1
+2026-09-07T04:34:59.4251845Z   fetch-tags: false
+2026-09-07T04:34:59.4252249Z   show-progress: true
+2026-09-07T04:34:59.4252883Z   lfs: false
+2026-09-07T04:34:59.4253371Z   submodules: false
+2026-09-07T04:34:59.4253782Z   set-safe-directory: true
+2026-09-07T04:34:59.4254268Z   allow-unsafe-pr-checkout: false
+2026-09-07T04:34:59.4254897Z ##[endgroup]
+2026-09-07T04:34:59.5046229Z Syncing repository: sim-soft/validator
+2026-09-07T04:34:59.5048288Z ##[group]Getting Git version info
+2026-09-07T04:34:59.5049114Z Working directory is '/home/runner/work/validator/validator'
+2026-09-07T04:34:59.5050333Z [command]/usr/bin/git version
+2026-09-07T04:34:59.5566616Z git version 2.55.0
+2026-09-07T04:34:59.5583007Z ##[endgroup]
+2026-09-07T04:34:59.5595531Z Temporarily overriding HOME='/home/runner/work/_temp/5d616590-038c-49aa-bb61-6fd0b340e7bd' before making global git config changes
+2026-09-07T04:34:59.5597484Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-07T04:34:59.5600254Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/validator/validator
+2026-09-07T04:34:59.5649138Z Deleting the contents of '/home/runner/work/validator/validator'
+2026-09-07T04:34:59.5652749Z ##[group]Initializing the repository
+2026-09-07T04:34:59.5656388Z [command]/usr/bin/git init /home/runner/work/validator/validator
+2026-09-07T04:34:59.5765131Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-07T04:34:59.5766471Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-07T04:34:59.5767455Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-07T04:34:59.5768202Z hint: call:
+2026-09-07T04:34:59.5768694Z hint:
+2026-09-07T04:34:59.5769261Z hint: 	git config --global init.defaultBranch <name>
+2026-09-07T04:34:59.5769831Z hint:
+2026-09-07T04:34:59.5770397Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-07T04:34:59.5771678Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-07T04:34:59.5772430Z hint:
+2026-09-07T04:34:59.5772950Z hint: 	git branch -m <name>
+2026-09-07T04:34:59.5773473Z hint:
+2026-09-07T04:34:59.5774129Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-07T04:34:59.5775025Z Initialized empty Git repository in /home/runner/work/validator/validator/.git/
+2026-09-07T04:34:59.5776688Z [command]/usr/bin/git remote add origin https://github.com/sim-soft/validator
+2026-09-07T04:34:59.6106790Z ##[endgroup]
+2026-09-07T04:34:59.6107597Z ##[group]Disabling automatic garbage collection
+2026-09-07T04:34:59.6110302Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-07T04:34:59.7244287Z ##[endgroup]
+2026-09-07T04:34:59.7245095Z ##[group]Setting up auth
+2026-09-07T04:34:59.7252144Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-07T04:34:59.7283943Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-07T04:35:00.0684536Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-07T04:35:00.0709217Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-07T04:35:00.0864111Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-07T04:35:00.0888351Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-07T04:35:00.1040394Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-07T04:35:00.1067300Z ##[endgroup]
+2026-09-07T04:35:00.1069231Z ##[group]Fetching the repository
+2026-09-07T04:35:00.1076304Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +dc6109aae9dfe5296ab1ec3311d8658dd47164d9:refs/remotes/pull/10/merge
+2026-09-07T04:35:00.8459420Z From https://github.com/sim-soft/validator
+2026-09-07T04:35:00.8460436Z  * [new ref]         dc6109aae9dfe5296ab1ec3311d8658dd47164d9 -> pull/10/merge
+2026-09-07T04:35:00.8463057Z ##[endgroup]
+2026-09-07T04:35:00.8463630Z ##[group]Determining the checkout info
+2026-09-07T04:35:00.8465243Z ##[endgroup]
+2026-09-07T04:35:00.8470089Z [command]/usr/bin/git sparse-checkout disable
+2026-09-07T04:35:00.8514480Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-07T04:35:00.8535653Z ##[group]Checking out the ref
+2026-09-07T04:35:00.8537685Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/10/merge
+2026-09-07T04:35:00.8603855Z Note: switching to 'refs/remotes/pull/10/merge'.
+2026-09-07T04:35:00.8604246Z 
+2026-09-07T04:35:00.8604550Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-09-07T04:35:00.8605007Z changes and commit them, and you can discard any commits you make in this
+2026-09-07T04:35:00.8605527Z state without impacting any branches by switching back to a branch.
+2026-09-07T04:35:00.8605875Z 
+2026-09-07T04:35:00.8606183Z If you want to create a new branch to retain commits you create, you may
+2026-09-07T04:35:00.8606782Z do so (now or later) by using -c with the switch command. Example:
+2026-09-07T04:35:00.8607088Z 
+2026-09-07T04:35:00.8607284Z   git switch -c <new-branch-name>
+2026-09-07T04:35:00.8607522Z 
+2026-09-07T04:35:00.8607705Z Or undo this operation with:
+2026-09-07T04:35:00.8607913Z 
+2026-09-07T04:35:00.8608075Z   git switch -
+2026-09-07T04:35:00.8608306Z 
+2026-09-07T04:35:00.8608572Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-09-07T04:35:00.8608861Z 
+2026-09-07T04:35:00.8609162Z HEAD is now at dc6109a Merge 99eed521afe73d574f57a1290366aa3aae3c1cdd into d4d283cbedaa1495953a247ca423ed97daf418bb
+2026-09-07T04:35:00.8611499Z ##[endgroup]
+2026-09-07T04:35:00.8639948Z [command]/usr/bin/git log -1 --format=%H
+2026-09-07T04:35:00.8657341Z dc6109aae9dfe5296ab1ec3311d8658dd47164d9
+2026-09-07T04:35:00.8842381Z ##[group]Run shivammathur/setup-php@v2
+2026-09-07T04:35:00.8842706Z with:
+2026-09-07T04:35:00.8842997Z   php-version: 8.4
+2026-09-07T04:35:00.8843273Z   coverage: none
+2026-09-07T04:35:00.8843528Z   ini-file: production
+2026-09-07T04:35:00.8845575Z   github-token: ***
+2026-09-07T04:35:00.8845828Z ##[endgroup]
+2026-09-07T04:35:00.9136828Z [command]/usr/bin/bash /home/runner/work/_actions/shivammathur/setup-php/v2/src/scripts/run.sh
+2026-09-07T04:35:00.9423256Z 
+2026-09-07T04:35:00.9424416Z [90;1m==> [0m[37;1mSetup PHP[0m
+2026-09-07T04:35:06.5509577Z [32;1m✓ [0m[34;1mPHP [0m[90;1mInstalled PHP 8.4.25[0m
+2026-09-07T04:35:06.5510254Z 
+2026-09-07T04:35:06.5511046Z [90;1m==> [0m[37;1mSetup Tools[0m
+2026-09-07T04:35:07.0550553Z [32;1m✓ [0m[34;1mcomposer [0m[90;1mAdded composer 2.10.3[0m
+2026-09-07T04:35:07.0551178Z 
+2026-09-07T04:35:07.2844831Z [90;1m==> [0m[37;1mSetup Coverage[0m
+2026-09-07T04:35:07.2845934Z [32;1m✓ [0m[34;1mnone [0m[90;1mDisabled Xdebug and PCOV[0m
+2026-09-07T04:35:07.2846496Z 
+2026-09-07T04:35:07.2847626Z [90;1m==> [0m[37;1mSponsor setup-php[0m
+2026-09-07T04:35:07.2848413Z [32;1m✓ [0m[34;1msetup-php [0m[90;1mhttps://setup-php.com/sponsor[0m
+2026-09-07T04:35:07.2986942Z ##[group]Run composer validate --strict --no-check-lock
+2026-09-07T04:35:07.2987453Z [36;1mcomposer validate --strict --no-check-lock[0m
+2026-09-07T04:35:07.3012359Z shell: /usr/bin/bash -e {0}
+2026-09-07T04:35:07.3012629Z env:
+2026-09-07T04:35:07.3012945Z   COMPOSER_PROCESS_TIMEOUT: 0
+2026-09-07T04:35:07.3013215Z   COMPOSER_NO_INTERACTION: 1
+2026-09-07T04:35:07.3013460Z   COMPOSER_NO_AUDIT: 1
+2026-09-07T04:35:07.3013725Z ##[endgroup]
+2026-09-07T04:35:07.6368089Z ./composer.json is valid
+2026-09-07T04:35:07.6542132Z ##[group]Run ramsey/composer-install@v3
+2026-09-07T04:35:07.6542459Z with:
+2026-09-07T04:35:07.6542705Z   dependency-versions: lowest
+2026-09-07T04:35:07.6542967Z   require-lock-file: false
+2026-09-07T04:35:07.6543436Z   composer-filename: composer
+2026-09-07T04:35:07.6543687Z env:
+2026-09-07T04:35:07.6543916Z   COMPOSER_PROCESS_TIMEOUT: 0
+2026-09-07T04:35:07.6544215Z   COMPOSER_NO_INTERACTION: 1
+2026-09-07T04:35:07.6544478Z   COMPOSER_NO_AUDIT: 1
+2026-09-07T04:35:07.6544733Z ##[endgroup]
+2026-09-07T04:35:07.6596577Z ##[start-action display=Determine PHP version;id=__ramsey_composer-install.php]
+2026-09-07T04:35:07.6617999Z ##[group]Run ${GITHUB_ACTION_PATH}/bin/php_version.sh
+2026-09-07T04:35:07.6618405Z [36;1m${GITHUB_ACTION_PATH}/bin/php_version.sh[0m
+2026-09-07T04:35:07.6642865Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-09-07T04:35:07.6643211Z env:
+2026-09-07T04:35:07.6643457Z   COMPOSER_PROCESS_TIMEOUT: 0
+2026-09-07T04:35:07.6643817Z   COMPOSER_NO_INTERACTION: 1
+2026-09-07T04:35:07.6644085Z   COMPOSER_NO_AUDIT: 1
+2026-09-07T04:35:07.6644316Z ##[endgroup]
+2026-09-07T04:35:07.8247898Z ##[end-action id=__ramsey_composer-install.php;outcome=success;conclusion=success;duration_ms=165]
+2026-09-07T04:35:07.8252509Z ##[start-action display=Determine whether we should ignore caching;id=__ramsey_composer-install.should-cache]
+2026-09-07T04:35:07.8284038Z ##[group]Run ${GITHUB_ACTION_PATH}/bin/should_cache.sh ""
+2026-09-07T04:35:07.8284391Z [36;1m${GITHUB_ACTION_PATH}/bin/should_cache.sh ""[0m
+2026-09-07T04:35:07.8304006Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-09-07T04:35:07.8304348Z env:
+2026-09-07T04:35:07.8304618Z   COMPOSER_PROCESS_TIMEOUT: 0
+2026-09-07T04:35:07.8304907Z   COMPOSER_NO_INTERACTION: 1
+2026-09-07T04:35:07.8305169Z   COMPOSER_NO_AUDIT: 1
+2026-09-07T04:35:07.8305397Z ##[endgroup]
+2026-09-07T04:35:07.8613692Z ##[end-action id=__ramsey_composer-install.should-cache;outcome=success;conclusion=success;duration_ms=36]
+2026-09-07T04:35:07.8616086Z ##[start-action display=Determine Composer paths;id=__ramsey_composer-install.composer]
+2026-09-07T04:35:07.8633797Z ##[group]Run ${GITHUB_ACTION_PATH}/bin/composer_paths.sh \
+2026-09-07T04:35:07.8634197Z [36;1m${GITHUB_ACTION_PATH}/bin/composer_paths.sh \[0m
+2026-09-07T04:35:07.8634493Z [36;1m  "" \[0m
+2026-09-07T04:35:07.8634692Z [36;1m  "" \[0m
+2026-09-07T04:35:07.8634937Z [36;1m  "/usr/bin/php" \[0m
+2026-09-07T04:35:07.8635174Z [36;1m  "composer"[0m
+2026-09-07T04:35:07.8651959Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-09-07T04:35:07.8652253Z env:
+2026-09-07T04:35:07.8652559Z   COMPOSER_PROCESS_TIMEOUT: 0
+2026-09-07T04:35:07.8652819Z   COMPOSER_NO_INTERACTION: 1
+2026-09-07T04:35:07.8653078Z   COMPOSER_NO_AUDIT: 1
+2026-09-07T04:35:07.8653329Z ##[endgroup]
+2026-09-07T04:35:08.3973781Z ##[end-action id=__ramsey_composer-install.composer;outcome=success;conclusion=success;duration_ms=535]
+2026-09-07T04:35:08.3977820Z ##[start-action display=Determine cache key;id=__ramsey_composer-install.cache-key]
+2026-09-07T04:35:08.4616628Z ##[group]Run ${GITHUB_ACTION_PATH}/bin/cache_key.sh \
+2026-09-07T04:35:08.4617099Z [36;1m${GITHUB_ACTION_PATH}/bin/cache_key.sh \[0m
+2026-09-07T04:35:08.4617492Z [36;1m  "Linux" \[0m
+2026-09-07T04:35:08.4617761Z [36;1m  "8.4.25" \[0m
+2026-09-07T04:35:08.4618027Z [36;1m  "lowest" \[0m
+2026-09-07T04:35:08.4618299Z [36;1m  "" \[0m
+2026-09-07T04:35:08.4618647Z [36;1m  "90efb913a067335d0c051c450da14a15965c58420a076d7ef103fd019cf4a310" \[0m
+2026-09-07T04:35:08.4619000Z [36;1m  "" \[0m
+2026-09-07T04:35:08.4619214Z [36;1m  "" \[0m
+2026-09-07T04:35:08.4619420Z [36;1m  ""[0m
+2026-09-07T04:35:08.4640227Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-09-07T04:35:08.4640615Z env:
+2026-09-07T04:35:08.4641002Z   COMPOSER_PROCESS_TIMEOUT: 0
+2026-09-07T04:35:08.4641267Z   COMPOSER_NO_INTERACTION: 1
+2026-09-07T04:35:08.4641531Z   COMPOSER_NO_AUDIT: 1
+2026-09-07T04:35:08.4641803Z ##[endgroup]
+2026-09-07T04:35:08.5098874Z ##[end-action id=__ramsey_composer-install.cache-key;outcome=success;conclusion=success;duration_ms=112]
+2026-09-07T04:35:08.5101268Z ##[start-action display=Cache Composer dependencies;id=__ramsey_composer-install.__actions_cache]
+2026-09-07T04:35:08.5147042Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-07T04:35:08.5148049Z ##[group]Run actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809
+2026-09-07T04:35:08.5148390Z with:
+2026-09-07T04:35:08.5148631Z   path: /home/runner/.cache/composer
+2026-09-07T04:35:08.5149098Z   key: Linux-php-8.4.25-composer-lowest-90efb913a067335d0c051c450da14a15965c58420a076d7ef103fd019cf4a310
+2026-09-07T04:35:08.5149597Z   restore-keys: Linux-php-8.4.25-composer-lowest-
+
+2026-09-07T04:35:08.5149954Z   enableCrossOsArchive: false
+2026-09-07T04:35:08.5150244Z   fail-on-cache-miss: false
+2026-09-07T04:35:08.5150515Z   lookup-only: false
+2026-09-07T04:35:08.5151002Z   save-always: false
+2026-09-07T04:35:08.5151247Z env:
+2026-09-07T04:35:08.5151515Z   COMPOSER_PROCESS_TIMEOUT: 0
+2026-09-07T04:35:08.5151803Z   COMPOSER_NO_INTERACTION: 1
+2026-09-07T04:35:08.5152041Z   COMPOSER_NO_AUDIT: 1
+2026-09-07T04:35:08.5152388Z   CACHE_RESTORE_KEY: Linux-php-8.4.25-composer-lowest-
+2026-09-07T04:35:08.5152692Z ##[endgroup]
+2026-09-07T04:35:08.5939170Z (node:2488) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-07T04:35:08.5939812Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-07T04:35:08.7255867Z Cache not found for input keys: Linux-php-8.4.25-composer-lowest-90efb913a067335d0c051c450da14a15965c58420a076d7ef103fd019cf4a310, Linux-php-8.4.25-composer-lowest-
+2026-09-07T04:35:08.7296348Z ##[end-action id=__ramsey_composer-install.__actions_cache;outcome=success;conclusion=success;duration_ms=219]
+2026-09-07T04:35:08.7298921Z ##[start-action display=Install Composer dependencies;id=__ramsey_composer-install.__run]
+2026-09-07T04:35:08.7316975Z ##[group]Run ${GITHUB_ACTION_PATH}/bin/composer_install.sh \
+2026-09-07T04:35:08.7317384Z [36;1m${GITHUB_ACTION_PATH}/bin/composer_install.sh \[0m
+2026-09-07T04:35:08.7317658Z [36;1m  "lowest" \[0m
+2026-09-07T04:35:08.7317931Z [36;1m  "" \[0m
+2026-09-07T04:35:08.7318137Z [36;1m  "" \[0m
+2026-09-07T04:35:08.7318385Z [36;1m  "/usr/bin/php" \[0m
+2026-09-07T04:35:08.7318673Z [36;1m  "/opt/hostedtoolcache/setup-php/tools/composer" \[0m
+2026-09-07T04:35:08.7318952Z [36;1m  "" \[0m
+2026-09-07T04:35:08.7319187Z [36;1m  "false" \[0m
+2026-09-07T04:35:08.7319411Z [36;1m  "composer" \[0m
+2026-09-07T04:35:08.7338609Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-09-07T04:35:08.7338966Z env:
+2026-09-07T04:35:08.7339198Z   COMPOSER_PROCESS_TIMEOUT: 0
+2026-09-07T04:35:08.7339506Z   COMPOSER_NO_INTERACTION: 1
+2026-09-07T04:35:08.7339752Z   COMPOSER_NO_AUDIT: 1
+2026-09-07T04:35:08.7340057Z   CACHE_RESTORE_KEY: Linux-php-8.4.25-composer-lowest-
+2026-09-07T04:35:08.7340344Z ##[endgroup]
+2026-09-07T04:35:08.8399869Z [32mLoading composer repositories with package information[39m
+2026-09-07T04:35:09.3104411Z [32mUpdating dependencies[39m
+2026-09-07T04:35:09.3155869Z [32mLock file operations: 32 installs, 0 updates, 0 removals[39m
+2026-09-07T04:35:09.3156451Z   - Locking [32mmyclabs/deep-copy[39m ([33m1.13.4[39m)
+2026-09-07T04:35:09.3156944Z   - Locking [32mnikic/php-parser[39m ([33mv5.7.0[39m)
+2026-09-07T04:35:09.3157442Z   - Locking [32mphar-io/manifest[39m ([33m2.0.4[39m)
+2026-09-07T04:35:09.3157862Z   - Locking [32mphar-io/version[39m ([33m3.2.1[39m)
+2026-09-07T04:35:09.3158437Z   - Locking [32mphpstan/phpstan[39m ([33m2.0.0[39m)
+2026-09-07T04:35:09.3158883Z   - Locking [32mphpunit/php-code-coverage[39m ([33m11.0.12[39m)
+2026-09-07T04:35:09.3159692Z   - Locking [32mphpunit/php-file-iterator[39m ([33m5.1.0[39m)
+2026-09-07T04:35:09.3160173Z   - Locking [32mphpunit/php-invoker[39m ([33m5.0.1[39m)
+2026-09-07T04:35:09.3160833Z   - Locking [32mphpunit/php-text-template[39m ([33m4.0.1[39m)
+2026-09-07T04:35:09.3161443Z   - Locking [32mphpunit/php-timer[39m ([33m7.0.1[39m)
+2026-09-07T04:35:09.3161862Z   - Locking [32mphpunit/phpunit[39m ([33m11.5.50[39m)
+2026-09-07T04:35:09.3162220Z   - Locking [32msebastian/cli-parser[39m ([33m3.0.2[39m)
+2026-09-07T04:35:09.3162583Z   - Locking [32msebastian/code-unit[39m ([33m3.0.3[39m)
+2026-09-07T04:35:09.3162997Z   - Locking [32msebastian/code-unit-reverse-lookup[39m ([33m4.0.1[39m)
+2026-09-07T04:35:09.3163406Z   - Locking [32msebastian/comparator[39m ([33m6.3.3[39m)
+2026-09-07T04:35:09.3163762Z   - Locking [32msebastian/complexity[39m ([33m4.0.1[39m)
+2026-09-07T04:35:09.3164091Z   - Locking [32msebastian/diff[39m ([33m6.0.2[39m)
+2026-09-07T04:35:09.3164488Z   - Locking [32msebastian/environment[39m ([33m7.2.1[39m)
+2026-09-07T04:35:09.3165022Z   - Locking [32msebastian/exporter[39m ([33m6.3.2[39m)
+2026-09-07T04:35:09.3165483Z   - Locking [32msebastian/global-state[39m ([33m7.0.2[39m)
+2026-09-07T04:35:09.3165949Z   - Locking [32msebastian/lines-of-code[39m ([33m3.0.1[39m)
+2026-09-07T04:35:09.3166414Z   - Locking [32msebastian/object-enumerator[39m ([33m6.0.1[39m)
+2026-09-07T04:35:09.3166876Z   - Locking [32msebastian/object-reflector[39m ([33m4.0.0[39m)
+2026-09-07T04:35:09.3167272Z   - Locking [32msebastian/recursion-context[39m ([33m6.0.0[39m)
+2026-09-07T04:35:09.3167629Z   - Locking [32msebastian/type[39m ([33m5.1.3[39m)
+2026-09-07T04:35:09.3168003Z   - Locking [32msebastian/version[39m ([33m5.0.2[39m)
+2026-09-07T04:35:09.3168354Z   - Locking [32mstaabm/side-effects-detector[39m ([33m1.0.5[39m)
+2026-09-07T04:35:09.3168806Z   - Locking [32msymfony/polyfill-ctype[39m ([33mv1.8.0[39m)
+2026-09-07T04:35:09.3169206Z   - Locking [32msymfony/polyfill-mbstring[39m ([33mv1.0.0[39m)
+2026-09-07T04:35:09.3169600Z   - Locking [32msymfony/translation-contracts[39m ([33mv2.5.0[39m)
+2026-09-07T04:35:09.3169982Z   - Locking [32msymfony/validator[39m ([33mv8.0.0[39m)
+2026-09-07T04:35:09.3170326Z   - Locking [32mtheseer/tokenizer[39m ([33m1.3.1[39m)
+2026-09-07T04:35:09.3170650Z [32mWriting lock file[39m
+2026-09-07T04:35:09.3171216Z [32mInstalling dependencies from lock file (including require-dev)[39m
+2026-09-07T04:35:09.3173806Z [32mPackage operations: 32 installs, 0 updates, 0 removals[39m
+2026-09-07T04:35:09.3181874Z   - Downloading [32mphpstan/phpstan[39m ([33m2.0.0[39m)
+2026-09-07T04:35:09.3182477Z   - Downloading [32mstaabm/side-effects-detector[39m ([33m1.0.5[39m)
+2026-09-07T04:35:09.3192077Z   - Downloading [32msebastian/version[39m ([33m5.0.2[39m)
+2026-09-07T04:35:09.3206916Z   - Downloading [32msebastian/type[39m ([33m5.1.3[39m)
+2026-09-07T04:35:09.3209278Z   - Downloading [32msebastian/recursion-context[39m ([33m6.0.0[39m)
+2026-09-07T04:35:09.3210247Z   - Downloading [32msebastian/object-reflector[39m ([33m4.0.0[39m)
+2026-09-07T04:35:09.3211885Z   - Downloading [32msebastian/object-enumerator[39m ([33m6.0.1[39m)
+2026-09-07T04:35:09.3212558Z   - Downloading [32msebastian/global-state[39m ([33m7.0.2[39m)
+2026-09-07T04:35:09.3213033Z   - Downloading [32msebastian/exporter[39m ([33m6.3.2[39m)
+2026-09-07T04:35:09.3213580Z   - Downloading [32msebastian/environment[39m ([33m7.2.1[39m)
+2026-09-07T04:35:09.3213979Z   - Downloading [32msebastian/diff[39m ([33m6.0.2[39m)
+2026-09-07T04:35:09.3214409Z   - Downloading [32msebastian/comparator[39m ([33m6.3.3[39m)
+2026-09-07T04:35:09.3214904Z   - Downloading [32msebastian/code-unit[39m ([33m3.0.3[39m)
+2026-09-07T04:35:09.3215378Z   - Downloading [32msebastian/cli-parser[39m ([33m3.0.2[39m)
+2026-09-07T04:35:09.3215843Z   - Downloading [32mphpunit/php-timer[39m ([33m7.0.1[39m)
+2026-09-07T04:35:09.3216529Z   - Downloading [32mphpunit/php-text-template[39m ([33m4.0.1[39m)
+2026-09-07T04:35:09.3217091Z   - Downloading [32mphpunit/php-invoker[39m ([33m5.0.1[39m)
+2026-09-07T04:35:09.3217543Z   - Downloading [32mphpunit/php-file-iterator[39m ([33m5.1.0[39m)
+2026-09-07T04:35:09.3218059Z   - Downloading [32mtheseer/tokenizer[39m ([33m1.3.1[39m)
+2026-09-07T04:35:09.3218548Z   - Downloading [32mnikic/php-parser[39m ([33mv5.7.0[39m)
+2026-09-07T04:35:09.3219062Z   - Downloading [32msebastian/lines-of-code[39m ([33m3.0.1[39m)
+2026-09-07T04:35:09.3219557Z   - Downloading [32msebastian/complexity[39m ([33m4.0.1[39m)
+2026-09-07T04:35:09.3219989Z   - Downloading [32msebastian/code-unit-reverse-lookup[39m ([33m4.0.1[39m)
+2026-09-07T04:35:09.3220465Z   - Downloading [32mphpunit/php-code-coverage[39m ([33m11.0.12[39m)
+2026-09-07T04:35:09.3220971Z   - Downloading [32mphar-io/version[39m ([33m3.2.1[39m)
+2026-09-07T04:35:09.3221366Z   - Downloading [32mphar-io/manifest[39m ([33m2.0.4[39m)
+2026-09-07T04:35:09.3221764Z   - Downloading [32mmyclabs/deep-copy[39m ([33m1.13.4[39m)
+2026-09-07T04:35:09.3222140Z   - Downloading [32mphpunit/phpunit[39m ([33m11.5.50[39m)
+2026-09-07T04:35:09.3222711Z   - Downloading [32msymfony/translation-contracts[39m ([33mv2.5.0[39m)
+2026-09-07T04:35:09.3223187Z   - Downloading [32msymfony/polyfill-mbstring[39m ([33mv1.0.0[39m)
+2026-09-07T04:35:09.3223620Z   - Downloading [32msymfony/polyfill-ctype[39m ([33mv1.8.0[39m)
+2026-09-07T04:35:09.3224025Z   - Downloading [32msymfony/validator[39m ([33mv8.0.0[39m)
+2026-09-07T04:35:10.4725481Z   - Installing [32mphpstan/phpstan[39m ([33m2.0.0[39m): Extracting archive
+2026-09-07T04:35:10.4744000Z   - Installing [32mstaabm/side-effects-detector[39m ([33m1.0.5[39m): Extracting archive
+2026-09-07T04:35:10.4749429Z   - Installing [32msebastian/version[39m ([33m5.0.2[39m): Extracting archive
+2026-09-07T04:35:10.4757391Z   - Installing [32msebastian/type[39m ([33m5.1.3[39m): Extracting archive
+2026-09-07T04:35:10.4759058Z   - Installing [32msebastian/recursion-context[39m ([33m6.0.0[39m): Extracting archive
+2026-09-07T04:35:10.4764775Z   - Installing [32msebastian/object-reflector[39m ([33m4.0.0[39m): Extracting archive
+2026-09-07T04:35:10.4768830Z   - Installing [32msebastian/object-enumerator[39m ([33m6.0.1[39m): Extracting archive
+2026-09-07T04:35:10.4773464Z   - Installing [32msebastian/global-state[39m ([33m7.0.2[39m): Extracting archive
+2026-09-07T04:35:10.4781949Z   - Installing [32msebastian/exporter[39m ([33m6.3.2[39m): Extracting archive
+2026-09-07T04:35:10.4786521Z   - Installing [32msebastian/environment[39m ([33m7.2.1[39m): Extracting archive
+2026-09-07T04:35:10.4796762Z   - Installing [32msebastian/diff[39m ([33m6.0.2[39m): Extracting archive
+2026-09-07T04:35:10.4797491Z   - Installing [32msebastian/comparator[39m ([33m6.3.3[39m): Extracting archive
+2026-09-07T04:35:10.4798081Z   - Installing [32msebastian/code-unit[39m ([33m3.0.3[39m): Extracting archive
+2026-09-07T04:35:10.4798675Z   - Installing [32msebastian/cli-parser[39m ([33m3.0.2[39m): Extracting archive
+2026-09-07T04:35:10.4799288Z   - Installing [32mphpunit/php-timer[39m ([33m7.0.1[39m): Extracting archive
+2026-09-07T04:35:10.4799832Z   - Installing [32mphpunit/php-text-template[39m ([33m4.0.1[39m): Extracting archive
+2026-09-07T04:35:10.4800413Z   - Installing [32mphpunit/php-invoker[39m ([33m5.0.1[39m): Extracting archive
+2026-09-07T04:35:10.4801195Z   - Installing [32mphpunit/php-file-iterator[39m ([33m5.1.0[39m): Extracting archive
+2026-09-07T04:35:10.4802303Z   - Installing [32mtheseer/tokenizer[39m ([33m1.3.1[39m): Extracting archive
+2026-09-07T04:35:10.4803184Z   - Installing [32mnikic/php-parser[39m ([33mv5.7.0[39m): Extracting archive
+2026-09-07T04:35:10.4804238Z   - Installing [32msebastian/lines-of-code[39m ([33m3.0.1[39m): Extracting archive
+2026-09-07T04:35:10.4805218Z   - Installing [32msebastian/complexity[39m ([33m4.0.1[39m): Extracting archive
+2026-09-07T04:35:10.4806364Z   - Installing [32msebastian/code-unit-reverse-lookup[39m ([33m4.0.1[39m): Extracting archive
+2026-09-07T04:35:10.4807170Z   - Installing [32mphpunit/php-code-coverage[39m ([33m11.0.12[39m): Extracting archive
+2026-09-07T04:35:10.4808020Z   - Installing [32mphar-io/version[39m ([33m3.2.1[39m): Extracting archive
+2026-09-07T04:35:10.4809005Z   - Installing [32mphar-io/manifest[39m ([33m2.0.4[39m): Extracting archive
+2026-09-07T04:35:10.4810049Z   - Installing [32mmyclabs/deep-copy[39m ([33m1.13.4[39m): Extracting archive
+2026-09-07T04:35:10.4811614Z   - Installing [32mphpunit/phpunit[39m ([33m11.5.50[39m): Extracting archive
+2026-09-07T04:35:10.4812187Z   - Installing [32msymfony/translation-contracts[39m ([33mv2.5.0[39m): Extracting archive
+2026-09-07T04:35:10.4813112Z   - Installing [32msymfony/polyfill-mbstring[39m ([33mv1.0.0[39m): Extracting archive
+2026-09-07T04:35:10.4814124Z   - Installing [32msymfony/polyfill-ctype[39m ([33mv1.8.0[39m): Extracting archive
+2026-09-07T04:35:10.4815034Z   - Installing [32msymfony/validator[39m ([33mv8.0.0[39m): Extracting archive
+2026-09-07T04:35:11.0573016Z [32m5 package suggestions were added by new dependencies, use `composer suggest` to see details.[39m
+2026-09-07T04:35:11.0575240Z [32mGenerating autoload files[39m
+2026-09-07T04:35:11.1241881Z [32m28 packages you are using are looking for funding.[39m
+2026-09-07T04:35:11.1242428Z [32mUse the `composer fund` command to find out more![39m
+2026-09-07T04:35:11.1459225Z ##[end-action id=__ramsey_composer-install.__run;outcome=success;conclusion=success;duration_ms=2415]
+2026-09-07T04:35:11.1494532Z ##[group]Run composer show symfony/validator | head -3
+2026-09-07T04:35:11.1494934Z [36;1mcomposer show symfony/validator | head -3[0m
+2026-09-07T04:35:11.1515056Z shell: /usr/bin/bash -e {0}
+2026-09-07T04:35:11.1515333Z env:
+2026-09-07T04:35:11.1515588Z   COMPOSER_PROCESS_TIMEOUT: 0
+2026-09-07T04:35:11.1515893Z   COMPOSER_NO_INTERACTION: 1
+2026-09-07T04:35:11.1516147Z   COMPOSER_NO_AUDIT: 1
+2026-09-07T04:35:11.1516501Z   CACHE_RESTORE_KEY: Linux-php-8.4.25-composer-lowest-
+2026-09-07T04:35:11.1516800Z ##[endgroup]
+2026-09-07T04:35:11.2560782Z name     : symfony/validator
+2026-09-07T04:35:11.2561206Z descrip. : Provides tools to validate values
+2026-09-07T04:35:11.2561675Z keywords : 
+2026-09-07T04:35:11.2671628Z ##[group]Run vendor/bin/phpunit
+2026-09-07T04:35:11.2671966Z [36;1mvendor/bin/phpunit[0m
+2026-09-07T04:35:11.2692300Z shell: /usr/bin/bash -e {0}
+2026-09-07T04:35:11.2692557Z env:
+2026-09-07T04:35:11.2692773Z   COMPOSER_PROCESS_TIMEOUT: 0
+2026-09-07T04:35:11.2693075Z   COMPOSER_NO_INTERACTION: 1
+2026-09-07T04:35:11.2693409Z   COMPOSER_NO_AUDIT: 1
+2026-09-07T04:35:11.2693678Z   CACHE_RESTORE_KEY: Linux-php-8.4.25-composer-lowest-
+2026-09-07T04:35:11.2693988Z ##[endgroup]
+2026-09-07T04:35:11.4134940Z PHPUnit 11.5.50 by Sebastian Bergmann and contributors.
+2026-09-07T04:35:11.4135315Z 
+2026-09-07T04:35:11.4135428Z Runtime:       PHP 8.4.25
+2026-09-07T04:35:11.4136081Z Configuration: /home/runner/work/validator/validator/phpunit.xml
+2026-09-07T04:35:11.4136393Z 
+2026-09-07T04:35:11.4253801Z D..............................................................  63 / 175 ( 36%)
+2026-09-07T04:35:11.4297438Z ............................................................... 126 / 175 ( 72%)
+2026-09-07T04:35:11.4709026Z .................................................               175 / 175 (100%)
+2026-09-07T04:35:11.4709630Z 
+2026-09-07T04:35:11.4709813Z Time: 00:00.056, Memory: 10.00 MB
+2026-09-07T04:35:11.4710030Z 
+2026-09-07T04:35:11.4710167Z 1 test triggered 4 PHP deprecations:
+2026-09-07T04:35:11.4710379Z 
+2026-09-07T04:35:11.4710903Z 1) /home/runner/work/validator/validator/vendor/symfony/translation-contracts/TranslatorInterface.php:66
+2026-09-07T04:35:11.4716173Z Symfony\Contracts\Translation\TranslatorInterface::trans(): Implicitly marking parameter $domain as nullable is deprecated, the explicit nullable type must be used instead
+2026-09-07T04:35:11.4716715Z 
+2026-09-07T04:35:11.4716847Z Triggered by:
+2026-09-07T04:35:11.4717062Z 
+2026-09-07T04:35:11.4717430Z * CustomConstraintValidatorTest::validationPassesWhenConstraintPasses
+2026-09-07T04:35:11.4718079Z   /home/runner/work/validator/validator/tests/Validator/Constraints/CustomConstraintValidatorTest.php:17
+2026-09-07T04:35:11.4718847Z 
+2026-09-07T04:35:11.4719212Z 2) /home/runner/work/validator/validator/vendor/symfony/translation-contracts/TranslatorInterface.php:0
+2026-09-07T04:35:11.4720187Z Symfony\Contracts\Translation\TranslatorInterface::trans(): Implicitly marking parameter $locale as nullable is deprecated, the explicit nullable type must be used instead
+2026-09-07T04:35:11.4720880Z 
+2026-09-07T04:35:11.4721008Z Triggered by:
+2026-09-07T04:35:11.4721162Z 
+2026-09-07T04:35:11.4721444Z * CustomConstraintValidatorTest::validationPassesWhenConstraintPasses
+2026-09-07T04:35:11.4722055Z   /home/runner/work/validator/validator/tests/Validator/Constraints/CustomConstraintValidatorTest.php:17
+2026-09-07T04:35:11.4722439Z 
+2026-09-07T04:35:11.4722711Z 3) /home/runner/work/validator/validator/vendor/symfony/translation-contracts/TranslatorTrait.php:46
+2026-09-07T04:35:11.4723783Z Symfony\Contracts\Translation\TranslatorTrait::trans(): Implicitly marking parameter $domain as nullable is deprecated, the explicit nullable type must be used instead
+2026-09-07T04:35:11.4724390Z 
+2026-09-07T04:35:11.4724508Z Triggered by:
+2026-09-07T04:35:11.4724683Z 
+2026-09-07T04:35:11.4724952Z * CustomConstraintValidatorTest::validationPassesWhenConstraintPasses
+2026-09-07T04:35:11.4725607Z   /home/runner/work/validator/validator/tests/Validator/Constraints/CustomConstraintValidatorTest.php:17
+2026-09-07T04:35:11.4726006Z 
+2026-09-07T04:35:11.4726321Z 4) /home/runner/work/validator/validator/vendor/symfony/translation-contracts/TranslatorTrait.php:46
+2026-09-07T04:35:11.4727186Z Symfony\Contracts\Translation\TranslatorTrait::trans(): Implicitly marking parameter $locale as nullable is deprecated, the explicit nullable type must be used instead
+2026-09-07T04:35:11.4727761Z 
+2026-09-07T04:35:11.4727856Z Triggered by:
+2026-09-07T04:35:11.4728048Z 
+2026-09-07T04:35:11.4728309Z * CustomConstraintValidatorTest::validationPassesWhenConstraintPasses
+2026-09-07T04:35:11.4729123Z   /home/runner/work/validator/validator/tests/Validator/Constraints/CustomConstraintValidatorTest.php:17
+2026-09-07T04:35:11.4729521Z 
+2026-09-07T04:35:11.4729678Z OK, but there were issues!
+2026-09-07T04:35:11.4730007Z Tests: 175, Assertions: 243, Deprecations: 4.
+2026-09-07T04:35:11.4789296Z ##[error]Process completed with exit code 1.
+2026-09-07T04:35:11.4889343Z Post job cleanup.
+2026-09-07T04:35:11.4893186Z ##[start-action display=Cache Composer dependencies;id=__75dbe413-cf81-4139-84c6-7f5b0a9dc122.__actions_cache]
+2026-09-07T04:35:11.4896277Z ##[end-action id=__75dbe413-cf81-4139-84c6-7f5b0a9dc122.__actions_cache;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-09-07T04:35:11.4954499Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-07T04:35:11.4955475Z Post job cleanup.
+2026-09-07T04:35:11.5626211Z [command]/usr/bin/git version
+2026-09-07T04:35:11.5659506Z git version 2.55.0
+2026-09-07T04:35:11.5685030Z Temporarily overriding HOME='/home/runner/work/_temp/5b9d272b-bdf7-4a8f-9c8c-e7ba8cc732f8' before making global git config changes
+2026-09-07T04:35:11.5685891Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-07T04:35:11.5689267Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/validator/validator
+2026-09-07T04:35:11.6136605Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-07T04:35:11.6164958Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-07T04:35:11.6323126Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-07T04:35:11.6422203Z http.https://github.com/.extraheader
+2026-09-07T04:35:11.6429478Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-07T04:35:11.7105597Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-07T04:35:11.7268889Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-07T04:35:11.7293911Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-07T04:35:11.7548183Z Cleaning up orphan processes
+2026-09-07T04:35:11.7753492Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809, actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

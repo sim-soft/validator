@@ -9,7 +9,7 @@ composer require simsoft/validator
 **Requirements:**
 
 - PHP >= 8.4
-- Symfony Validator ^8
+- Symfony Validator ^8.1
 
 That is everything you need for the constraints on this page. A few specialised
 constraints (`Country`, `Currency`, `Language`, `Bic`, `Video`) need an extra

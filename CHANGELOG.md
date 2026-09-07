@@ -51,6 +51,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Raised the `symfony/validator` floor from `^8` to `^8.1`, and added an
+  explicit `symfony/translation-contracts: ^3.5` requirement. On the previous
+  floor Composer could resolve `translation-contracts` v2.5, whose
+  `TranslatorTrait` uses implicitly nullable parameters — removed in PHP 8.4
+  and reported as deprecations on every supported PHP version. Note that
+  `symfony/validator ^8.1` still permits `translation-contracts ^2.5|^3`, so
+  raising the validator floor alone does not avoid this; the explicit
+  constraint is what pins a deprecation-free resolution
 - `Errors` and `ValidatedInput` now implement `IteratorAggregate` instead of
   `Iterator`
 - `Errors::$errors` visibility changed from `public` to `protected`
