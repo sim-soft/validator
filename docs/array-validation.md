@@ -1,5 +1,29 @@
 # Nested & Wildcard Array Validation
 
+## Declaring the Root Attribute
+
+The examples below pass a third argument (`['address']`, `['items']`) naming the
+root input key. When you do not declare attributes at all, the root is derived
+from the rule key automatically, so both of these work:
+
+```php
+// Root derived automatically from 'items.*.name'
+Validator::make($_POST, ['items.*.name' => new NotBlank()]);
+
+// Root declared explicitly
+Validator::make($_POST, ['items.*.name' => new NotBlank()], ['items']);
+```
+
+Once you declare attributes explicitly, the list must cover every rule. A rule
+naming an attribute outside the list throws `InvalidArgumentException`, because
+its value would always be `null` and most constraints accept `null` — the rule
+would pass without ever seeing your data.
+
+```php
+// Throws: the rule needs 'items', but only 'name' is declared
+Validator::make($_POST, ['items.*.name' => new NotBlank()], ['name']);
+```
+
 ## Nested Dot Notation
 
 Use dot notation to validate nested array values.

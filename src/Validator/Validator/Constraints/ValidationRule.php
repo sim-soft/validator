@@ -21,6 +21,9 @@ abstract class ValidationRule extends Constraint
     /** @var bool Whether the constraint passed validation */
     protected bool $passed = true;
 
+    /** @var string|null The pristine message, captured before the first run */
+    private ?string $defaultMessage = null;
+
     /**
      * Perform validation.
      *
@@ -57,6 +60,10 @@ abstract class ValidationRule extends Constraint
      */
     public function performValidation(): bool
     {
+        // Restore the pristine message so a failure recorded by an earlier run
+        // is not reported against a later value that failed for another reason.
+        $this->defaultMessage ??= $this->message;
+        $this->message = $this->defaultMessage;
         $this->passed = true;
 
         $this->validate($this->value, function (string $message): void {

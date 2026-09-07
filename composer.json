@@ -31,6 +31,7 @@
       "symfony/validator": "^8"
     },
     "require-dev": {
+        "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^11"
     },
     "autoload": {
@@ -45,7 +46,12 @@
         }
     },
     "scripts": {
-        "test": "phpunit --display-deprecations tests"
+        "test": "phpunit --display-deprecations tests",
+        "analyse": "phpstan analyse --no-progress",
+        "check": [
+            "@analyse",
+            "@test"
+        ]
     },
   "config": {
     "sort-packages": true

@@ -45,8 +45,42 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `CustomConstraintValidator` safely handles non-scalar values
 - Documentation uses `Rule::bail()` instead of `Sequentially`
 
+### Security
+
+- **Fail-open validation when a rule's attribute was not retained.** Input was
+  filtered to the declared attribute list before rules ran, so any rule whose
+  attribute was missing from that list validated `null` instead of the real
+  value. Because most constraints (`Email`, `Length`, `Choice`, `Positive`)
+  accept `null`, such rules silently passed on data they never inspected. This
+  affected dot-notation and wildcard rules used without the third constructor
+  argument, and any mismatch between a rule key and the attribute list.
+  Attributes are now derived from rule keys when not declared explicitly, and a
+  rule naming an attribute outside an explicit list throws
+  `InvalidArgumentException` rather than passing silently.
+- **Conditional rules leaked across runs.** `sometimes()` wrote into the shared
+  rule set, so a rule applied when its condition was true stayed applied to
+  every later `setData()` / `validate()` on the same instance, even once the
+  condition was false. Conditional rules are now resolved into a per-run copy.
+- **Shared rule state leaked between fields and requests.** `ValidationRule`
+  recorded the value and failure message on the constraint itself, so one
+  instance reused across fields, runs, or requests reported another field's
+  message and permanently lost its default. Validation now runs against a clone
+  and restores the pristine message on each run — important under Swoole,
+  RoadRunner, and FrankenPHP, where constraints outlive a request.
+
 ### Fixed
 
+- `passes()` / `fails()` used "no validated data" as the cache sentinel. When
+  every attribute failed, that state is indistinguishable from "never ran", so
+  each call silently re-validated and re-fired `after()` hooks; conversely,
+  rules added after a passing run were ignored. Replaced with an explicit flag
+  that resets on `setData()`, `addRule()`, `after()`, and `sometimes()`.
+- `messages()` overrides no longer repeat the same custom message once per
+  violation, and now apply to wildcard-expanded keys (`items.*.name`).
+- `Errors::add()` no longer collapses distinct violations that share wording;
+  only exact repeat messages are deduplicated.
+- `Rule::requiredIf()` evaluates a callable condition at validation time rather
+  than at construction time.
 - Iterator bug: empty collections no longer yield a phantom iteration
 - `ValidationRule::$passed` now resets on each `performValidation()` call
 - `validate()` no longer accumulates errors/data on repeated calls

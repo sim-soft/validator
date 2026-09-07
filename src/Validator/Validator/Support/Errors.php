@@ -11,6 +11,8 @@ use Traversable;
  * Errors class
  *
  * Collects and provides access to validation error messages.
+ *
+ * @implements IteratorAggregate<string, array<string>>
  */
 class Errors implements IteratorAggregate, Countable
 {
@@ -36,8 +38,13 @@ class Errors implements IteratorAggregate, Countable
      */
     public function add(string $attribute, string $message): static
     {
-        $this->errors[$attribute][] = $message;
-        $this->errors[$attribute] = array_unique($this->errors[$attribute]);
+        // Deduplicate the exact message only. Distinct violations that happen to
+        // share wording are still two failures, but repeating an identical
+        // message adds nothing for the reader.
+        if (!in_array($message, $this->errors[$attribute] ?? [], true)) {
+            $this->errors[$attribute][] = $message;
+        }
+
         return $this;
     }
 

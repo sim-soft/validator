@@ -25,9 +25,14 @@ class CustomConstraintValidator extends ConstraintValidator
             return;
         }
 
-        $constraint->withValue($value);
+        // Validate against a clone. A ValidationRule records the value and the
+        // failure message on itself, so validating the shared instance directly
+        // would leak that state to every other field using the same rule object,
+        // to later runs, and — in long-running runtimes — across requests.
+        $rule = clone $constraint;
+        $rule->withValue($value);
 
-        if ($constraint->performValidation()) {
+        if ($rule->performValidation()) {
             return;
         }
 
@@ -37,7 +42,7 @@ class CustomConstraintValidator extends ConstraintValidator
             default => gettype($value),
         };
 
-        $this->context->buildViolation($constraint->getFailMessage())
+        $this->context->buildViolation($rule->getFailMessage())
             ->setParameter('{{ value }}', $displayValue)
             ->addViolation();
     }

@@ -21,9 +21,9 @@ class Custom extends ValidationRule
     /**
      * Constructor.
      *
-     * @param string|array|callable $options Callable, array with 'callback' key, or string message.
+     * @param string|array<string, mixed>|callable $options Callable, array with 'callback' key, or string message.
      * @param callable|null $callback Callback when $options is a string message.
-     * @param array|null $groups Validation groups.
+     * @param array<string>|null $groups Validation groups.
      * @param mixed|null $payload Custom payload.
      */
     public function __construct(

@@ -81,6 +81,17 @@
 
 .gitattributes export-ignore
 .gitignore     export-ignore
+.editorconfig  export-ignore
+.github/       export-ignore
+.idea/         export-ignore
+.kiro/         export-ignore
+.phpunit.cache/ export-ignore
+docs/          export-ignore
+tests/         export-ignore
+phpunit.xml    export-ignore
+phpstan.neon.dist export-ignore
+CHANGELOG.md   export-ignore
+validator.code-workspace export-ignore
 # Drupal git normalization
 # @see https://www.kernel.org/pub/software/scm/git/docs/gitattributes.html
 # @see https://www.drupal.org/node/1542048
