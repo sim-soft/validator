@@ -33,6 +33,14 @@ security issues:
 
 ## Notes for Consumers
 
+**Validator instances are request-scoped — do not share them.** A `Validator`
+holds the input, validated data, and errors from whatever it last validated, and
+`after()` hooks and `sometimes()` rules accumulate across calls. Sharing one
+instance between requests — by registering it as a container singleton, storing
+it statically, or keeping it alive in a long-running runtime such as Swoole,
+RoadRunner, or FrankenPHP — can expose one user's submitted data in another
+user's response. Construct a new validator for each validation.
+
 **Escape error messages before rendering them.** Messages may embed the
 submitted value — for example, a rule written as
 `$fail("Invalid value: $value")`, or the built-in `{{ value }}` placeholder.

@@ -4,6 +4,11 @@ You might wonder why this library uses constraint objects instead of
 string-based rules like Laravel's `'required|email|max:255'`.
 
 ```php
+use Simsoft\Validator\Rule;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
 // String-based (Laravel style)
 'email' => 'required|email|max:255'
 

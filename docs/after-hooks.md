@@ -28,6 +28,11 @@ if ($validator->fails()) {
 }
 ```
 
+Register each hook once, right after creating the validator. Calling `after()`
+again adds a second hook rather than replacing the first, and both then run on
+every subsequent `validate()` — see
+[One Validator per Validation](getting-started.md#one-validator-per-validation).
+
 ## Custom Error Messages
 
 Override the `messages()` method in a custom validator class to replace
@@ -66,3 +71,21 @@ class ContactValidator extends Validator
     }
 }
 ```
+
+Used like any other validator:
+
+```php
+use App\Validators\ContactValidator;
+
+$validator = ContactValidator::make($_POST);
+
+if ($validator->fails()) {
+    // Both a blank and a malformed email now report the same message
+    echo $validator->errors()->first('email');
+}
+```
+
+Because one message covers every constraint on the attribute, a reader cannot
+tell *why* the value was rejected. Prefer per-constraint `message:` arguments
+when the distinction matters, and use `messages()` when you want a single
+consistent wording for the field.

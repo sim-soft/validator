@@ -250,6 +250,67 @@ class RegressionTest extends TestCase
         $this->assertSame('Every item needs a name', $validator->errors()->first('items.1.name'));
     }
 
+    // ─── Documented reuse guarantees ─────────────────────────────────
+
+    #[Test]
+    public function setDataClearsResultsFromThePreviousRun(): void
+    {
+        // Reuse within a request is documented as safe because setData()
+        // replaces the input and drops the previous run's results.
+        $validator = Validator::make(
+            ['name' => ''],
+            ['name' => new NotBlank(message: 'Required')]
+        );
+
+        $this->assertFalse($validator->validate());
+        $this->assertSame('Required', $validator->errors()->first('name'));
+
+        $validator->setData(['name' => 'Alice']);
+
+        $this->assertTrue($validator->validate());
+        $this->assertCount(0, $validator->errors());
+        $this->assertNull($validator->errors()->first('name'));
+        $this->assertSame('Alice', $validator->validated('name'));
+    }
+
+    #[Test]
+    public function resultsAreNotReadableBeforeRevalidating(): void
+    {
+        // After new input arrives, the previous run's validated data must not
+        // still be readable — that is the leak the request-scoped guidance is
+        // about.
+        $validator = Validator::make(
+            ['secret' => 'first'],
+            ['secret' => new NotBlank()]
+        );
+
+        $validator->validate();
+        $this->assertSame('first', $validator->validated('secret'));
+
+        $validator->setData(['secret' => 'second']);
+
+        $this->assertNull($validator->validated('secret'));
+    }
+
+    #[Test]
+    public function afterHooksAccumulateAcrossReuse(): void
+    {
+        // Documented behaviour: after() adds a hook rather than replacing the
+        // previous one, so registering per-run compounds.
+        $calls = 0;
+        $validator = Validator::make(['name' => 'A'], ['name' => new NotBlank()]);
+
+        $validator->after(function () use (&$calls): void { $calls++; });
+        $validator->validate();
+        $this->assertSame(1, $calls);
+
+        $validator->after(function () use (&$calls): void { $calls++; });
+        $validator->setData(['name' => 'B']);
+        $validator->validate();
+
+        $this->assertSame(3, $calls);
+    }
+
     // ─── Attribute derivation in subclasses ──────────────────────────
 
     #[Test]

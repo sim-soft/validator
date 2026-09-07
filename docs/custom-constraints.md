@@ -1,11 +1,17 @@
 # Reusable Custom Constraints
 
-For validation logic used across multiple validators, create a constraint class
-by extending `ValidationRule`.
+[`Rule::make()`](custom-rules.md) is the quickest way to write a one-off check.
+When the same logic is needed in several validators — or you want to configure
+it per use — move it into a class that extends `ValidationRule`.
 
-> **Important (Symfony Validator v8):** Custom constraints must initialize their
-> own properties in the constructor and pass `null` as the first argument to
-`parent::__construct()`.
+You implement one method, `validate()`, which receives the value and a `$fail`
+callback. Call `$fail('...')` with a message when the value is invalid; return
+without calling it and the value passes.
+
+> **Note for Symfony Validator v8:** set up your own properties in the
+> constructor and pass `null` as the first argument to `parent::__construct()`.
+> Earlier versions let the parent constructor assign options for you; v8 does
+> not.
 
 ```php
 namespace App\Constraints;
@@ -48,18 +54,40 @@ class Password extends ValidationRule
 }
 ```
 
-Usage:
+Usage — the first argument is the options array the constructor above reads, so
+every key in it (`min`, `max`, `format`, `message`) is optional:
 
 ```php
 use App\Constraints\Password;
 use Simsoft\Validator;
 
 $validator = Validator::make($_POST, [
+    // Defaults: 8–20 characters
+    'password' => new Password(),
+]);
+
+// Or configured, and limited to a validation group
+$validator = Validator::make($_POST, [
     'password' => new Password([
         'message' => 'Invalid password',
         'min' => 5,
         'max' => 10,
     ], groups: ['login']),
+]);
+```
+
+The same constraint object can be reused across several fields — each field is
+validated against its own copy, so a failure on one does not affect another:
+
+```php
+use App\Constraints\Password;
+use Simsoft\Validator;
+
+$rule = new Password(['min' => 10]);
+
+$validator = Validator::make($_POST, [
+    'password' => $rule,
+    'password_confirm' => $rule,
 ]);
 ```
 

@@ -25,6 +25,14 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * constructor signature is expected to stay compatible so that make() can
  * instantiate them.
  *
+ * Instances are request-scoped and are NOT safe to share. A Validator holds the
+ * input, the validated data, and the errors of whatever it last validated, and
+ * after() hooks and sometimes() rules accumulate on each call rather than
+ * replacing the previous ones. Create one per validation — do not register a
+ * Validator as a container singleton, and in a long-running runtime (Swoole,
+ * RoadRunner, FrankenPHP) do not hold one across requests, where reuse would
+ * leak one user's data into another's response.
+ *
  * @phpstan-consistent-constructor
  *
  * @phpstan-type RuleSet array<string, Constraint|array<Constraint>>
@@ -256,6 +264,10 @@ class Validator
     /**
      * Register a callback to run after validation.
      *
+     * Hooks accumulate: calling this twice registers two hooks, and both run on
+     * every subsequent validate(). Register them once per instance rather than
+     * on a reused one.
+     *
      * @param Closure $callback Callback receiving this Validator instance.
      * @return static
      */
@@ -271,6 +283,9 @@ class Validator
      *
      * The rules are only applied when the condition closure returns true.
      * The condition receives the full input array.
+     *
+     * Like after(), registrations accumulate across calls and are re-evaluated
+     * on every subsequent validate().
      *
      * @param string $attribute The attribute name (supports dot notation).
      * @param array<Constraint>|Constraint $rules Constraints to apply.

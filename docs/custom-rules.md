@@ -1,9 +1,15 @@
 # Custom Rules with Closures
 
-Use `Rule::make()` for inline custom validation logic. Call `$fail($message)` to
-indicate failure.
+When none of the [built-in constraints](constraints-reference.md) fit, use
+`Rule::make()` to write the check inline.
+
+Your closure receives two arguments: the value being validated, and a `$fail`
+callback. Call `$fail('...')` with a message when the value is invalid; return
+without calling it and the value passes. There is no `return true` — not
+failing *is* passing.
 
 ```php
+use Closure;
 use Simsoft\Validator;
 use Simsoft\Validator\Rule;
 
@@ -16,7 +22,10 @@ $validator = Validator::make($_POST, [
 ]);
 ```
 
-A more complex example with multiple checks:
+Because the closure is ordinary PHP, you can run several checks and report a
+different message for each. A rule reports at most one error, and if you call
+`$fail()` more than once the last message wins — so use `elseif` to stop at the
+first problem you find:
 
 ```php
 $validator = Validator::make($_POST, [

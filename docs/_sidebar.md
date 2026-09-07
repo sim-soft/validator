@@ -3,7 +3,7 @@
 
 - Getting Started
     - [Usage Guide](getting-started.md)
-  - [Constraints Reference](constraints-reference.md)
+    - [Constraints Reference](constraints-reference.md)
 
 - Advanced Usage
     - [Custom Rules](custom-rules.md)
@@ -16,7 +16,7 @@
 
 - Quick Reference
     - [Comparison](comparison.md)
-  - [Why Object-Based Rules?](why-objects.md)
+    - [Why Object-Based Rules?](why-objects.md)
 
 <div style="text-align:center;margin:20px 0">
     <a href="https://github.com/sim-soft" target="_blank" style="text-decoration:none">

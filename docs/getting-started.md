@@ -11,6 +11,11 @@ composer require simsoft/validator
 - PHP >= 8.4
 - Symfony Validator ^8
 
+That is everything you need for the constraints on this page. A few specialised
+constraints (`Country`, `Currency`, `Language`, `Bic`, `Video`) need an extra
+Symfony component — see
+[Optional Dependencies](constraints-reference.md#optional-dependencies).
+
 ## Basic Usage
 
 Use `Validator::make()` to validate an array of input against a set of rules.
@@ -158,6 +163,41 @@ if ($validator->passes()) {
     print_r($validator->errors()->all());
 }
 ```
+
+## One Validator per Validation
+
+A validator remembers what it last validated — the input, the validated data,
+and the errors. Create a new one each time you validate, which is what
+`Validator::make()` already does:
+
+```php
+use Simsoft\Validator;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+// Good — a fresh validator for this request
+$validator = Validator::make($_POST, ['name' => new NotBlank()]);
+```
+
+**Do not share one validator across requests.** In particular, do not register
+it as a singleton in a dependency-injection container, and do not keep one in a
+static property or a long-running worker (Swoole, RoadRunner, FrankenPHP). Two
+requests using the same instance would see each other's data.
+
+Reusing an instance within a single request is fine — `setData()` replaces the
+input and clears the previous results:
+
+```php
+$validator = Validator::make($_POST, ['name' => new NotBlank()]);
+$validator->validate();
+
+$validator->setData(['name' => 'Bob']);
+$validator->validate(); // errors from the previous run are cleared
+```
+
+One thing to watch when you do reuse an instance: `after()` and `sometimes()`
+*add* to what is already registered rather than replacing it. Calling `after()`
+in a loop registers a new hook each time, and all of them run on every
+subsequent `validate()`. Register them once, right after creating the validator.
 
 ## Available Constraints
 

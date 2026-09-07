@@ -88,6 +88,7 @@
 .phpunit.cache/ export-ignore
 docs/          export-ignore
 tests/         export-ignore
+tools/         export-ignore
 phpunit.xml    export-ignore
 phpstan.neon.dist export-ignore
 CHANGELOG.md   export-ignore

@@ -32,7 +32,15 @@ if ($validator->fails()) {
 Stop validating remaining attributes after the first failure is found.
 
 ```php
-$validator = Validator::make($inputs, $rules);
+use Simsoft\Validator;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+$validator = Validator::make($_POST, [
+    'email' => new Email(message: 'Invalid email'),
+    'password' => new NotBlank(message: 'Password is required'),
+]);
+
 $validator->stopOnFirstFailure();
 
 if ($validator->fails()) {

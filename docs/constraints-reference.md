@@ -25,6 +25,8 @@ This page shows how to use the most common ones — copy-paste ready.
   each, anyOf, array
 - [Common Patterns](#common-patterns) — Email, optional, dropdown, numeric, file
   upload
+- [Optional Dependencies](#optional-dependencies) — constraints needing extra
+  packages
 
 > **See also:
 ** [Full list of 70+ Symfony Constraints](https://symfony.com/doc/current/validation.html#constraints)
@@ -249,6 +251,8 @@ use Symfony\Component\Validator\Constraints\Choice;
 ### Choice — Multiple selections allowed
 
 ```php
+use Symfony\Component\Validator\Constraints\Choice;
+
 'tags' => new Choice(
     choices: ['php', 'javascript', 'python', 'go'],
     multiple: true,
@@ -384,6 +388,7 @@ use Symfony\Component\Validator\Constraints\Image;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Video;
 
+// docs-check: skip requires the ffprobe binary
 // Extract temp paths from $_FILES
 $input = [
     'avatar' => $_FILES['avatar']['tmp_name'] ?? null,
@@ -481,9 +486,21 @@ use Symfony\Component\Validator\Constraints\Image;
 
 ### Video — Validate a video file
 
+> **Extra setup required.** `Video` inspects the file with `ffprobe`, so it
+> needs both the Symfony Process component and the FFmpeg binaries installed on
+> the server:
+>
+> ```bash
+> composer require symfony/process
+> ```
+>
+> Missing either one throws a `LogicException` when the constraint is
+> constructed. See [Optional Dependencies](#optional-dependencies).
+
 ```php
 use Symfony\Component\Validator\Constraints\Video;
 
+// docs-check: skip requires the ffprobe binary
 'video' => new Video(
     maxSize: '100M',
     mimeTypes: ['video/mp4', 'video/webm', 'video/quicktime'],
@@ -533,19 +550,34 @@ use Symfony\Component\Validator\Constraints\Iban;
 
 ### Bic — Valid BIC/SWIFT code
 
+> **Extra package required:** `composer require symfony/intl`. See
+> [Optional Dependencies](#optional-dependencies).
+
 ```php
 use Symfony\Component\Validator\Constraints\Bic;
 
+// docs-check: requires symfony/intl
 'swift_code' => new Bic(message: 'Invalid BIC/SWIFT code')
 ```
 
 ## Locale Constraints
+
+> **Extra package required.** Every constraint in this section, plus `Bic`
+> above, validates against ICU data supplied by the Symfony Intl component:
+>
+> ```bash
+> composer require symfony/intl
+> ```
+>
+> Without it, constructing the constraint throws a `LogicException`. See
+> [Optional Dependencies](#optional-dependencies).
 
 ### Country — Valid ISO country code
 
 ```php
 use Symfony\Component\Validator\Constraints\Country;
 
+// docs-check: requires symfony/intl
 // 2-letter code (ISO 3166-1 alpha-2) — default
 'country' => new Country(message: 'Invalid country code')
 // Accepts: US, GB, MY, SG, etc.
@@ -560,6 +592,7 @@ use Symfony\Component\Validator\Constraints\Country;
 ```php
 use Symfony\Component\Validator\Constraints\Currency;
 
+// docs-check: requires symfony/intl
 'currency' => new Currency(message: 'Invalid currency code')
 ```
 
@@ -570,6 +603,7 @@ Accepts: `USD`, `EUR`, `MYR`, `SGD`, etc.
 ```php
 use Symfony\Component\Validator\Constraints\Language;
 
+// docs-check: requires symfony/intl
 'language' => new Language(message: 'Invalid language code')
 ```
 
@@ -618,6 +652,10 @@ Many constraints use `{{ }}` placeholders in messages that Symfony automatically
 replaces with actual values:
 
 ```php
+use Symfony\Component\Validator\Constraints\Choice;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\Range;
+
 new Length(
     min: 8,
     max: 20,
@@ -655,6 +693,10 @@ Common placeholders: `{{ limit }}`, `{{ min }}`, `{{ max }}`, `{{ value }}`,
 ### Rule::bail() — Stop at first failure
 
 ```php
+use Simsoft\Validator\Rule;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
 'email' => Rule::bail([
     new NotBlank(message: 'Email is required'),
     new Email(message: 'Invalid email'),
@@ -680,6 +722,10 @@ Hobbies: [reading, gaming]   ← array of strings
 ```
 
 ```php
+use Simsoft\Validator\Rule;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
 // Array [...] — checks the name string itself
 'name' => [
     new NotBlank(),       // "John Smith" is not empty? ✅
@@ -731,6 +777,10 @@ use Symfony\Component\Validator\Constraints\Regex;
 ### Array — Collect all errors
 
 ```php
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
+
 'password' => [
     new NotBlank(message: 'Password is required'),
     new Length(min: 8, minMessage: 'At least 8 characters'),
@@ -743,6 +793,10 @@ use Symfony\Component\Validator\Constraints\Regex;
 ### Required email field
 
 ```php
+use Simsoft\Validator\Rule;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
 'email' => Rule::bail([
     new NotBlank(message: 'Email is required'),
     new Email(message: 'Invalid email'),
@@ -752,6 +806,7 @@ use Symfony\Component\Validator\Constraints\Regex;
 ### Optional field with validation when present
 
 ```php
+use Closure;
 use Simsoft\Validator\Rule;
 
 'nickname' => Rule::sometimes(function (mixed $value, Closure $fail) {
@@ -764,6 +819,10 @@ use Simsoft\Validator\Rule;
 ### Dropdown / select a field
 
 ```php
+use Simsoft\Validator\Rule;
+use Symfony\Component\Validator\Constraints\Choice;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
 'country' => Rule::bail([
     new NotBlank(message: 'Please select a country'),
     new Choice(choices: ['US', 'UK', 'MY', 'SG'], message: 'Invalid country'),
@@ -773,6 +832,11 @@ use Simsoft\Validator\Rule;
 ### Numeric input with range
 
 ```php
+use Simsoft\Validator\Rule;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\Constraints\Type;
+
 'quantity' => Rule::bail([
     new NotBlank(message: 'Quantity is required'),
     new Type(type: 'numeric', message: 'Must be a number'),
@@ -783,6 +847,7 @@ use Simsoft\Validator\Rule;
 ### File upload
 
 ```php
+use Simsoft\Validator\Rule;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -795,6 +860,36 @@ use Symfony\Component\Validator\Constraints\NotBlank;
     ),
 ])
 ```
+
+## Optional Dependencies
+
+Most constraints work out of the box. A few rely on Symfony components that are
+not installed with this package, because they pull in large data files or
+external tooling that most projects do not need.
+
+| Constraint                               | Needs                                    | Install with                       |
+|------------------------------------------|------------------------------------------|------------------------------------|
+| `Bic`, `Country`, `Currency`, `Language` | `symfony/intl`                           | `composer require symfony/intl`    |
+| `Video`                                  | `symfony/process` **and** FFmpeg on the server | `composer require symfony/process` |
+
+If you use one without its dependency, constructing the constraint throws a
+`LogicException` naming what is missing — the failure is immediate and explicit,
+not a silently skipped check.
+
+```php
+use Symfony\Component\Validator\Constraints\Country;
+use Symfony\Component\Validator\Exception\LogicException;
+
+try {
+    new Country(message: 'Invalid country code');
+} catch (LogicException $e) {
+    // "The Intl component is required to use the Country constraint."
+    echo $e->getMessage();
+}
+```
+
+Everything else on this page — including `Timezone`, `File`, `Image`, and
+`PasswordStrength` — works with no extra packages.
 
 ## Full Symfony Reference
 

@@ -45,6 +45,14 @@ if ($validator->passes()) {
 - PHP >= 8.4
 - Symfony Validator ^8
 
+A few specialised constraints (`Country`, `Currency`, `Language`, `Bic`,
+`Video`) need an extra Symfony component — see
+[Optional Dependencies](constraints-reference.md#optional-dependencies).
+
+> **Validators are request-scoped.** Create one per validation and do not share
+> an instance across requests — see
+> [One Validator per Validation](getting-started.md#one-validator-per-validation).
+
 ## License
 
 MIT — See [LICENSE](https://github.com/sim-soft/validator/blob/main/LICENSE) for

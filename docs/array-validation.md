@@ -7,6 +7,9 @@ root input key. When you do not declare attributes at all, the root is derived
 from the rule key automatically, so both of these work:
 
 ```php
+use Simsoft\Validator;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
 // Root derived automatically from 'items.*.name'
 Validator::make($_POST, ['items.*.name' => new NotBlank()]);
 
@@ -20,8 +23,16 @@ its value would always be `null` and most constraints accept `null` — the rule
 would pass without ever seeing your data.
 
 ```php
-// Throws: the rule needs 'items', but only 'name' is declared
-Validator::make($_POST, ['items.*.name' => new NotBlank()], ['name']);
+use Simsoft\Validator;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Exception\InvalidArgumentException;
+
+try {
+    // The rule needs 'items', but only 'name' is declared.
+    Validator::make($_POST, ['items.*.name' => new NotBlank()], ['name']);
+} catch (InvalidArgumentException $e) {
+    echo $e->getMessage();
+}
 ```
 
 ## Nested Dot Notation

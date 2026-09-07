@@ -43,6 +43,8 @@ To branch on the input currently being validated, prefer the `sometimes()`
 method on the validator, which receives that input:
 
 ```php
+use Symfony\Component\Validator\Constraints\NotBlank;
+
 $validator->sometimes(
     'password_confirm',
     new NotBlank(message: 'Password confirmation is required'),
