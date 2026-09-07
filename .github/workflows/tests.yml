@@ -5,6 +5,14 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  # Weekly run against freshly resolved dependencies. This package allows any
+  # symfony/validator ^8 and ships no lock file, so a new upstream release
+  # reaches consumers without any commit here to trigger CI. The schedule
+  # surfaces an upstream break (or a new deprecation, which phpunit.xml treats
+  # as a failure) before a consumer hits it.
+  schedule:
+    - cron: '37 6 * * 1'
+  workflow_dispatch:
 
 jobs:
   tests:
@@ -34,6 +42,13 @@ jobs:
         uses: ramsey/composer-install@v3
         with:
           dependency-versions: ${{ matrix.dependencies }}
+          # The cache key hashes composer.json, which does not change between
+          # scheduled runs — without a rotating suffix the weekly job would
+          # restore the same vendor/ and never see a new upstream release.
+          custom-cache-suffix: ${{ github.event_name == 'schedule' && format('fresh-{0}', github.run_id) || '' }}
+
+      - name: Show resolved Symfony Validator version
+        run: composer show symfony/validator | head -3
 
       - name: Run tests
         run: vendor/bin/phpunit
