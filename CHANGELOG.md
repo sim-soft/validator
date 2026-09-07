@@ -8,6 +8,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-09-07
+
+This is a major release. It contains breaking changes to `Errors`,
+`ValidatedInput`, `macro()`, and the supported `symfony/validator` range, and
+it fixes three security defects in validation state handling. Review the
+Security and Changed sections before upgrading.
+
 ### Added
 
 - `Rule::bail()` for per-attribute short-circuit validation (stop at first
@@ -119,3 +126,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `Validator::extend()` (dead code with no consumer)
 - `ValidatedInput::$hasNext` and `Errors::$hasNext` properties (replaced by
   `IteratorAggregate`)
+
+[Unreleased]: https://github.com/sim-soft/validator/compare/4.0.0...HEAD
+[4.0.0]: https://github.com/sim-soft/validator/compare/3.0.3...4.0.0
