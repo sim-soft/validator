@@ -33,6 +33,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Docsify documentation site with a dark / light theme
 - Constraints Reference page with copy-paste examples for 30+ constraints
 - "Why Object-Based Rules?" explainer page
+- Documented that `Validator` instances are request-scoped and must not be
+  shared — see "One Validator per Validation" in the usage guide. An instance
+  holds the input, validated data and errors of whatever it last validated, so
+  registering one as a container singleton, holding it statically, or keeping
+  it alive across requests in a long-running runtime (Swoole, RoadRunner,
+  FrankenPHP) can expose one user's data in another user's response
+- Documented the optional dependencies of five constraints, which previously
+  threw `LogicException` with no explanation: `Bic`, `Country`, `Currency` and
+  `Language` need `symfony/intl`, and `Video` needs `symfony/process` plus
+  FFmpeg installed on the server. Also declared under `suggest` in
+  `composer.json`
+- `tools/check-docs.php`, which executes every PHP example in the
+  documentation in a child process. Wired into `composer check` and CI so the
+  examples cannot drift from the implementation
+- Packagist, Tests and PHPStan badges in the README
 
 ### Changed
 
@@ -87,6 +102,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `addRule()` for new attributes no longer triggers undefined key warning
 - Replaced deprecated `get_class()` with `static::class`
 - Removed backslash-prefixed global function calls
+- 21 documentation examples that could not run as written — missing `use`
+  imports, undefined variables, and references to classes that were never
+  declared. Found by the new documentation checker
 
 ### Removed
 

@@ -1,8 +1,11 @@
 # Simsoft Validator
 
+[![Packagist](https://img.shields.io/packagist/v/simsoft/validator.svg?label=Packagist)](https://packagist.org/packages/simsoft/validator)
+[![Tests](https://img.shields.io/github/actions/workflow/status/sim-soft/validator/tests.yml?branch=master&label=Tests)](https://github.com/sim-soft/validator/actions/workflows/tests.yml)
+[![PHPStan](https://img.shields.io/badge/PHPStan-level%208-brightgreen.svg)](https://phpstan.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![PHP](https://img.shields.io/badge/PHP-8.4%2B-777BB4.svg?logo=php&logoColor=white)](https://www.php.net/)
-[![Docs](https://img.shields.io/badge/docs-online-blue.svg)](https://sim-soft.github.io/validator/)
+[![Docs](https://img.shields.io/badge/Docs-online-blue.svg)](https://sim-soft.github.io/validator/)
 
 A Laravel-inspired validation wrapper
 for [Symfony Validator](https://symfony.com/doc/current/validation.html). Simple
