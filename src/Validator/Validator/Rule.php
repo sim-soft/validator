@@ -5,17 +5,22 @@ namespace Simsoft\Validator;
 use Closure;
 use Simsoft\Validator\Constraints\Custom;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\All;
+use Symfony\Component\Validator\Constraints\AtLeastOneOf;
+use Symfony\Component\Validator\Constraints\Sequentially;
 
 /**
  * Rule class
+ *
+ * Static helper for creating custom validation rules.
  */
 class Rule
 {
     /**
-     * Make custom rule with closure.
+     * Create a custom rule with a closure.
      *
-     * @param callable $callable
-     * @param array|null $groups
+     * @param callable $callable Validation callback receiving (mixed $value, Closure $fail).
+     * @param array<string>|null $groups Validation groups.
      * @return Constraint
      */
     public static function make(callable $callable, ?array $groups = null): Constraint
@@ -24,11 +29,13 @@ class Rule
     }
 
     /**
-     * Perform required if.
+     * Create a conditional required rule.
      *
-     * @param bool|callable $required
-     * @param string $message
-     * @param array|null $groups
+     * The field is required (must not be null or empty string) only when the condition is true.
+     *
+     * @param bool|callable $required Condition or callable returning a boolean.
+     * @param string $message Error message when validation fails.
+     * @param array<string>|null $groups Validation groups.
      * @return Constraint
      */
     public static function requiredIf(
@@ -37,20 +44,80 @@ class Rule
         ?array $groups = null
     ): Constraint
     {
-        if (is_callable($required)) {
-            $required = $required();
-        }
+        return new Custom(function (mixed $value, Closure $fail) use ($message, $required): void {
+            // Resolved at validation time, not construction time, so the
+            // condition observes the state in effect when validation runs.
+            if (!(is_callable($required) ? $required() : $required)) {
+                return;
+            }
 
-        return new Custom(function(mixed $value, Closure $fail) use ($message, $required) {
-            if ($required) {
-                if (is_string($value)) {
-                    $value = trim($value);
-                }
+            if ($value === null) {
+                $fail($message);
+                return;
+            }
 
-                if (empty($value)) {
-                    $fail($message);
-                }
+            if (is_string($value) && trim($value) === '') {
+                $fail($message);
             }
         }, groups: $groups);
+    }
+
+    /**
+     * Create a rule that only applies when the attribute is present in input.
+     *
+     * @param callable $callable Validation callback receiving (mixed $value, Closure $fail).
+     * @param array<string>|null $groups Validation groups.
+     * @return Constraint
+     */
+    public static function sometimes(callable $callable, ?array $groups = null): Constraint
+    {
+        return new Custom(function (mixed $value, Closure $fail) use ($callable): void {
+            if ($value === null) {
+                return;
+            }
+
+            $callable($value, $fail);
+        }, groups: $groups);
+    }
+
+    /**
+     * Wrap constraints to stop at the first failure (short-circuit).
+     *
+     * @param array<Constraint> $constraints Constraints to apply sequentially.
+     * @param array<string>|null $groups Validation groups.
+     * @return Constraint
+     */
+    public static function bail(array $constraints, ?array $groups = null): Constraint
+    {
+        return new Sequentially($constraints, groups: $groups);
+    }
+
+    /**
+     * Apply constraints to every item in an array value.
+     *
+     * @param array<Constraint> $constraints Constraints each item must pass.
+     * @param array<string>|null $groups Validation groups.
+     * @return Constraint
+     */
+    public static function each(array $constraints, ?array $groups = null): Constraint
+    {
+        return new All($constraints, groups: $groups);
+    }
+
+    /**
+     * Value must pass at least one of the given constraints.
+     *
+     * @param array<Constraint> $constraints Constraints to try (passes if any one succeeds).
+     * @param string $message Error message when none pass.
+     * @param array<string>|null $groups Validation groups.
+     * @return Constraint
+     */
+    public static function anyOf(
+        array  $constraints,
+        string $message = 'This value should satisfy at least one of the following constraints.',
+        ?array $groups = null
+    ): Constraint
+    {
+        return new AtLeastOneOf($constraints, message: $message, groups: $groups);
     }
 }

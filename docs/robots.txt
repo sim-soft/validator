@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sim-soft.github.io/validator/sitemap.xml
