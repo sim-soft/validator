@@ -2,11 +2,11 @@ name: Tests
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, develop ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, develop ]
   # Weekly run against freshly resolved dependencies. This package allows any
-  # symfony/validator ^8 and ships no lock file, so a new upstream release
+  # symfony/validator ^8.1 and ships no lock file, so a new upstream release
   # reaches consumers without any commit here to trigger CI. The schedule
   # surfaces an upstream break (or a new deprecation, which phpunit.xml treats
   # as a failure) before a consumer hits it.
