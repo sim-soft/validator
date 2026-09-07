@@ -3,6 +3,7 @@
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Simsoft\Validator;
+use Simsoft\Validator\Constraints\CustomConstraintValidator;
 use Simsoft\Validator\Constraints\ValidationRule;
 use Simsoft\Validator\Rule;
 use Symfony\Component\Validator\Constraints\Choice;
@@ -247,6 +248,162 @@ class RegressionTest extends TestCase
         $validator->validate();
 
         $this->assertSame('Every item needs a name', $validator->errors()->first('items.1.name'));
+    }
+
+    // ─── Attribute derivation in subclasses ──────────────────────────
+
+    #[Test]
+    public function subclassRulesWithoutDeclaredAttributesDeriveRoots(): void
+    {
+        // A subclass supplies rules() but declares no $attributes, so the roots
+        // are derived when validate() resolves rules() for the first time.
+        $validator = new class extends Validator {
+            protected function rules(): array
+            {
+                return [
+                    'email' => new NotBlank(message: 'Email required'),
+                    'address.city' => new NotBlank(message: 'City required'),
+                ];
+            }
+        };
+
+        $validator->setData(['email' => '', 'address' => ['city' => 'London']]);
+
+        $this->assertFalse($validator->validate());
+        $this->assertSame('Email required', $validator->errors()->first('email'));
+        $this->assertSame('London', $validator->validated('address.city'));
+    }
+
+    #[Test]
+    public function addRuleRetainsInputForNewDottedAttribute(): void
+    {
+        $validator = Validator::make(
+            ['address' => ['city' => '']],
+            ['name' => new NotBlank()],
+            ['name', 'address']
+        );
+
+        $validator->addRule('address.city', new NotBlank(message: 'City required'));
+
+        $this->assertFalse($validator->validate());
+        $this->assertSame('City required', $validator->errors()->first('address.city'));
+    }
+
+    // ─── addRule() merge branches ────────────────────────────────────
+
+    #[Test]
+    public function addRuleMergesArrayIntoSequentially(): void
+    {
+        $validator = Validator::make(
+            ['name' => ''],
+            ['name' => Rule::bail([new NotBlank(message: 'Required')])]
+        );
+
+        $validator->addRule('name', [new Length(min: 5, minMessage: 'Too short')]);
+
+        $this->assertFalse($validator->validate());
+        $this->assertSame('Required', $validator->errors()->first('name'));
+    }
+
+    #[Test]
+    public function addRuleMergesSequentiallyIntoSequentially(): void
+    {
+        $validator = Validator::make(
+            ['name' => 'abc'],
+            ['name' => Rule::bail([new NotBlank()])]
+        );
+
+        $validator->addRule('name', Rule::bail([new Length(min: 5, minMessage: 'Too short')]));
+
+        $this->assertFalse($validator->validate());
+        $this->assertSame('Too short', $validator->errors()->first('name'));
+    }
+
+    #[Test]
+    public function addRuleAppendsConstraintToSequentially(): void
+    {
+        $validator = Validator::make(
+            ['name' => 'abc'],
+            ['name' => Rule::bail([new NotBlank()])]
+        );
+
+        $validator->addRule('name', new Length(min: 5, minMessage: 'Too short'));
+
+        $this->assertFalse($validator->validate());
+        $this->assertSame('Too short', $validator->errors()->first('name'));
+    }
+
+    #[Test]
+    public function addRuleMergesArrayIntoArray(): void
+    {
+        $validator = Validator::make(
+            ['name' => 'abc'],
+            ['name' => [new NotBlank()]]
+        );
+
+        $validator->addRule('name', [new Length(min: 5, minMessage: 'Too short')]);
+
+        $this->assertFalse($validator->validate());
+        $this->assertSame('Too short', $validator->errors()->first('name'));
+    }
+
+    #[Test]
+    public function addRuleMergesArrayIntoSingleConstraint(): void
+    {
+        $validator = Validator::make(
+            ['name' => 'abc'],
+            ['name' => new NotBlank()]
+        );
+
+        $validator->addRule('name', [new Length(min: 5, minMessage: 'Too short')]);
+
+        $this->assertFalse($validator->validate());
+        $this->assertSame('Too short', $validator->errors()->first('name'));
+    }
+
+    #[Test]
+    public function addRuleResolvesSubclassRulesBeforeMerging(): void
+    {
+        // Exercises the rules() fallback inside addRule() on a validator whose
+        // rules come from a subclass rather than the constructor.
+        $validator = new class extends Validator {
+            protected function rules(): array
+            {
+                return ['name' => new NotBlank(message: 'Required')];
+            }
+        };
+
+        $validator->setData(['name' => 'abc']);
+        $validator->addRule('name', new Length(min: 5, minMessage: 'Too short'));
+
+        $this->assertFalse($validator->validate());
+        $this->assertSame('Too short', $validator->errors()->first('name'));
+    }
+
+    // ─── CustomConstraintValidator guards ────────────────────────────
+
+    #[Test]
+    public function customValidatorIgnoresForeignConstraints(): void
+    {
+        $validator = new CustomConstraintValidator();
+
+        // A non-ValidationRule constraint must be ignored rather than fail.
+        $validator->validate('any', new NotBlank());
+
+        $this->expectNotToPerformAssertions();
+    }
+
+    #[Test]
+    public function nonScalarFailureValueIsRenderedAsItsType(): void
+    {
+        $rule = Rule::make(function (mixed $value, Closure $fail): void {
+            $fail('Bad: {{ value }}');
+        });
+
+        $validator = Validator::make(['data' => ['a', 'b']], ['data' => $rule]);
+        $validator->validate();
+
+        $this->assertSame('Bad: array', $validator->errors()->first('data'));
     }
 
     // ─── requiredIf deferral ─────────────────────────────────────────
