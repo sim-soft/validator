@@ -20,7 +20,7 @@ class Rule
      * Create a custom rule with a closure.
      *
      * @param callable $callable Validation callback receiving (mixed $value, Closure $fail).
-     * @param array|null $groups Validation groups.
+     * @param array<string>|null $groups Validation groups.
      * @return Constraint
      */
     public static function make(callable $callable, ?array $groups = null): Constraint
@@ -35,7 +35,7 @@ class Rule
      *
      * @param bool|callable $required Condition or callable returning a boolean.
      * @param string $message Error message when validation fails.
-     * @param array|null $groups Validation groups.
+     * @param array<string>|null $groups Validation groups.
      * @return Constraint
      */
     public static function requiredIf(
@@ -44,12 +44,10 @@ class Rule
         ?array $groups = null
     ): Constraint
     {
-        if (is_callable($required)) {
-            $required = $required();
-        }
-
         return new Custom(function (mixed $value, Closure $fail) use ($message, $required): void {
-            if (!$required) {
+            // Resolved at validation time, not construction time, so the
+            // condition observes the state in effect when validation runs.
+            if (!(is_callable($required) ? $required() : $required)) {
                 return;
             }
 
@@ -68,7 +66,7 @@ class Rule
      * Create a rule that only applies when the attribute is present in input.
      *
      * @param callable $callable Validation callback receiving (mixed $value, Closure $fail).
-     * @param array|null $groups Validation groups.
+     * @param array<string>|null $groups Validation groups.
      * @return Constraint
      */
     public static function sometimes(callable $callable, ?array $groups = null): Constraint
@@ -86,7 +84,7 @@ class Rule
      * Wrap constraints to stop at the first failure (short-circuit).
      *
      * @param array<Constraint> $constraints Constraints to apply sequentially.
-     * @param array|null $groups Validation groups.
+     * @param array<string>|null $groups Validation groups.
      * @return Constraint
      */
     public static function bail(array $constraints, ?array $groups = null): Constraint
@@ -98,7 +96,7 @@ class Rule
      * Apply constraints to every item in an array value.
      *
      * @param array<Constraint> $constraints Constraints each item must pass.
-     * @param array|null $groups Validation groups.
+     * @param array<string>|null $groups Validation groups.
      * @return Constraint
      */
     public static function each(array $constraints, ?array $groups = null): Constraint
@@ -111,7 +109,7 @@ class Rule
      *
      * @param array<Constraint> $constraints Constraints to try (passes if any one succeeds).
      * @param string $message Error message when none pass.
-     * @param array|null $groups Validation groups.
+     * @param array<string>|null $groups Validation groups.
      * @return Constraint
      */
     public static function anyOf(

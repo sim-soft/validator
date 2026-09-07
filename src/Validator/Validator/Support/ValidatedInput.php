@@ -11,13 +11,15 @@ use Traversable;
  * ValidatedInput class
  *
  * Holds validated data and provides methods to retrieve subsets.
+ *
+ * @implements IteratorAggregate<string, mixed>
  */
 class ValidatedInput implements IteratorAggregate, Countable
 {
     /**
      * Constructor.
      *
-     * @param array $data Validated data.
+     * @param array<string, mixed> $data Validated data.
      */
     public function __construct(protected array $data = [])
     {
@@ -38,7 +40,7 @@ class ValidatedInput implements IteratorAggregate, Countable
     /**
      * Retrieve all validated data.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function all(): array
     {
@@ -59,8 +61,8 @@ class ValidatedInput implements IteratorAggregate, Countable
     /**
      * Retrieve only the specified attributes.
      *
-     * @param array $attributes Attribute names to include.
-     * @return array
+     * @param array<string> $attributes Attribute names to include.
+     * @return array<string, mixed>
      */
     final public function only(array $attributes): array
     {
@@ -72,8 +74,8 @@ class ValidatedInput implements IteratorAggregate, Countable
     /**
      * Retrieve all attributes except the specified ones.
      *
-     * @param array $attributes Attribute names to exclude.
-     * @return array
+     * @param array<string> $attributes Attribute names to exclude.
+     * @return array<string, mixed>
      */
     final public function except(array $attributes): array
     {
@@ -116,7 +118,7 @@ class ValidatedInput implements IteratorAggregate, Countable
     /**
      * Get all validated data as an array.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

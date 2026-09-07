@@ -30,8 +30,26 @@ Alternative forms:
 // With a custom message
 Rule::requiredIf(!empty($inputs['password']), 'Password confirmation is required')
 
-// With a callable condition (evaluated at rule creation time)
+// With a callable condition (evaluated when validation runs)
 Rule::requiredIf(fn() => !empty($inputs['password']))
+```
+
+A boolean condition is fixed at the moment the rule is created. A callable is
+evaluated each time validation runs, so use the callable form when the condition
+depends on state that may change after the rule is built — such as a rule stored
+in a container and reused across requests.
+
+To branch on the input currently being validated, prefer the `sometimes()`
+method on the validator, which receives that input:
+
+```php
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+$validator->sometimes(
+    'password_confirm',
+    new NotBlank(message: 'Password confirmation is required'),
+    fn(array $input) => !empty($input['password'])
+);
 ```
 
 ## Optional Field Validation

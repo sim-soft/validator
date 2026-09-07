@@ -16,7 +16,7 @@
 
 - **Simpler than raw Symfony** — no manual validator building, violation list
   handling, or constraint validator wiring
-- **Lighter than Laravel** — one dependency vs. pulling in half of illuminating
+- **Lighter than Laravel** — one dependency vs. pulling in the illuminate stack
 - **Framework-independent** — works anywhere, no service container needed
 - **Familiar API** — `passes()`, `fails()`, `validated()`, `safe()` feel natural
   to Laravel developers

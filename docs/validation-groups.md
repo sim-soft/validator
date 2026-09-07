@@ -43,10 +43,25 @@ if ($validator->validate('login')) {
 
 Run groups in order — the next group only runs if the previous one passes.
 
-```php
-use Symfony\Component\Validator\Constraints\GroupSequence;
+Here `strict` constraints are only checked once every `login` constraint has
+passed, so a blank password reports "Password is required" rather than also
+complaining that it is too weak.
 
-$validator = LoginValidator::make($_POST);
+```php
+use Simsoft\Validator;
+use Symfony\Component\Validator\Constraints\GroupSequence;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
+
+$validator = Validator::make($_POST, [
+    'password' => [
+        new NotBlank(message: 'Password is required', groups: ['login']),
+        new PasswordStrength(
+            minScore: PasswordStrength::STRENGTH_STRONG,
+            groups: ['strict'],
+        ),
+    ],
+]);
 
 if ($validator->validate(new GroupSequence(['login', 'strict']))) {
     echo 'Pass';

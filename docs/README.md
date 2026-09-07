@@ -1,5 +1,8 @@
 # Simsoft Validator
 
+[![Packagist](https://img.shields.io/packagist/v/simsoft/validator.svg?label=Packagist)](https://packagist.org/packages/simsoft/validator)
+[![Tests](https://img.shields.io/github/actions/workflow/status/sim-soft/validator/tests.yml?branch=master&label=Tests)](https://github.com/sim-soft/validator/actions/workflows/tests.yml)
+[![PHPStan](https://img.shields.io/badge/PHPStan-level%208-brightgreen.svg)](https://phpstan.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![PHP](https://img.shields.io/badge/PHP-8.4%2B-777BB4.svg?logo=php&logoColor=white)](https://www.php.net/)
 
@@ -43,7 +46,15 @@ if ($validator->passes()) {
 ## Requirements
 
 - PHP >= 8.4
-- Symfony Validator ^8
+- Symfony Validator ^8.1
+
+A few specialised constraints (`Country`, `Currency`, `Language`, `Bic`,
+`Video`) need an extra Symfony component — see
+[Optional Dependencies](constraints-reference.md#optional-dependencies).
+
+> **Validators are request-scoped.** Create one per validation and do not share
+> an instance across requests — see
+> [One Validator per Validation](getting-started.md#one-validator-per-validation).
 
 ## License
 

@@ -1,8 +1,11 @@
 # Simsoft Validator
 
+[![Packagist](https://img.shields.io/packagist/v/simsoft/validator.svg?label=Packagist)](https://packagist.org/packages/simsoft/validator)
+[![Tests](https://img.shields.io/github/actions/workflow/status/sim-soft/validator/tests.yml?branch=master&label=Tests)](https://github.com/sim-soft/validator/actions/workflows/tests.yml)
+[![PHPStan](https://img.shields.io/badge/PHPStan-level%208-brightgreen.svg)](https://phpstan.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![PHP](https://img.shields.io/badge/PHP-8.4%2B-777BB4.svg?logo=php&logoColor=white)](https://www.php.net/)
-[![Docs](https://img.shields.io/badge/docs-online-blue.svg)](https://sim-soft.github.io/validator/)
+[![Docs](https://img.shields.io/badge/Docs-online-blue.svg)](https://sim-soft.github.io/validator/)
 
 A Laravel-inspired validation wrapper
 for [Symfony Validator](https://symfony.com/doc/current/validation.html). Simple
@@ -13,7 +16,11 @@ API, full power of Symfony constraints.
 ## Requirements
 
 - PHP >= 8.4
-- Symfony Validator ^8
+- Symfony Validator ^8.1
+
+A few specialised constraints (`Country`, `Currency`, `Language`, `Bic`,
+`Video`) need an extra Symfony component —
+see [Optional Dependencies](https://sim-soft.github.io/validator/#/constraints-reference?id=optional-dependencies).
 
 ## Installation
 
@@ -131,11 +138,22 @@ if ($validator->passes()) {
 }
 ```
 
+## One Validator per Validation
+
+A validator remembers what it last validated — the input, the validated data,
+and the errors. Create a new one each time, which is what `Validator::make()`
+already does. Do not register a validator as a container singleton, hold one in
+a static property, or keep one alive across requests in a long-running runtime
+(Swoole, RoadRunner, FrankenPHP): two requests sharing an instance would see
+each other's data.
+See [One Validator per Validation](https://sim-soft.github.io/validator/#/getting-started?id=one-validator-per-validation).
+
 ## Documentation
 
 **📖 [Read the Full Documentation](https://sim-soft.github.io/validator/)**
 
 - [Getting Started](https://sim-soft.github.io/validator/#/getting-started)
+- [Constraints Reference](https://sim-soft.github.io/validator/#/constraints-reference)
 - [Custom Rules with Closures](https://sim-soft.github.io/validator/#/custom-rules)
 - [Reusable Custom Constraints](https://sim-soft.github.io/validator/#/custom-constraints)
 - [Validation Groups](https://sim-soft.github.io/validator/#/validation-groups)
@@ -144,11 +162,15 @@ if ($validator->passes()) {
 - [After Hooks & Cross-Field Validation](https://sim-soft.github.io/validator/#/after-hooks)
 - [Runtime Rules & Configuration](https://sim-soft.github.io/validator/#/runtime-rules)
 - [Comparison with Other Validators](https://sim-soft.github.io/validator/#/comparison)
+- [Why Object-Based Rules?](https://sim-soft.github.io/validator/#/why-objects)
 
 ## Available Constraints
 
-All Symfony validation constraints are supported.
-See [Symfony Validation Constraints](https://symfony.com/doc/current/validation.html#constraints).
+All Symfony validation constraints are supported. See the
+[Constraints Reference](https://sim-soft.github.io/validator/#/constraints-reference)
+for copy-paste examples of the common ones, or
+[Symfony Validation Constraints](https://symfony.com/doc/current/validation.html#constraints)
+for the complete catalog.
 
 ## License
 

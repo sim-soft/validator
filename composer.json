@@ -28,11 +28,17 @@
   },
     "require": {
       "php": ">=8.4",
-      "symfony/validator": "^8"
+      "symfony/validator": "^8.1",
+      "symfony/translation-contracts": "^3.5"
     },
     "require-dev": {
+        "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^11"
     },
+  "suggest": {
+    "symfony/intl": "Required by the Bic, Country, Currency and Language constraints",
+    "symfony/process": "Required by the Video constraint (also needs FFmpeg installed on the server)"
+  },
     "autoload": {
         "psr-4": {
           "Simsoft\\": "src/Validator"
@@ -45,7 +51,14 @@
         }
     },
     "scripts": {
-        "test": "phpunit --display-deprecations tests"
+        "test": "phpunit --display-deprecations tests",
+        "analyse": "phpstan analyse --no-progress",
+        "check-docs": "php tools/check-docs.php",
+        "check": [
+            "@analyse",
+            "@test",
+            "@check-docs"
+        ]
     },
   "config": {
     "sort-packages": true
